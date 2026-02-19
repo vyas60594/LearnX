@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #8b5cf6;
+  --color-secondary: #3b82f6;
+  --color-navy: #0f172a;
+  --font-inter: "Inter", sans-serif;
+}
+
+:root {
+  font-family: var(--font-inter);
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+.glass {
+  @apply bg-white/80 backdrop-blur-md border border-white/20;
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+}

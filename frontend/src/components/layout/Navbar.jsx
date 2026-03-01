@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router';
 
 const Navbar = () => {
@@ -11,9 +10,9 @@ const Navbar = () => {
                     </div>
                     <div className="flex items-center space-x-4">
                         <Link to="/login" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Login</Link>
-                        <button className="bg-navy text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-95">
+                        <Link to="/Register" className="bg-navy text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-95">
                             Get Started
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

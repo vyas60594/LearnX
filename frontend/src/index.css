@@ -22,3 +22,12 @@ body {
 .gradient-text {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
 }
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

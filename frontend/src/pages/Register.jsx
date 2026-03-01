@@ -76,7 +76,7 @@ const Register = () => {
                     </div>
 
                     <button className="w-full h-14 bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-2xl font-bold text-base transition-all duration-300 shadow-lg shadow-slate-200/50 transform active:scale-[0.98]">
-                        Login
+                        Register
                     </button>
                 </div>
 
@@ -85,7 +85,7 @@ const Register = () => {
                     <p className="text-slate-500 font-medium">
                         Already have an account?{' '}
                         <Link to="/login" className="text-blue-600 hover:text-blue-700 font-bold transition-colors">
-                            Register
+                            Login
                         </Link>
                     </p>
                 </div>

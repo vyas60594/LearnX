@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router';
 import logo from '../assets/learnx_logo.svg';
 
 const Login = () => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -54,7 +55,7 @@ const Login = () => {
             />
           </div>
 
-          <button className="w-full h-14 bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-2xl font-bold text-base transition-all duration-300 shadow-lg shadow-slate-200/50 transform active:scale-[0.98]">
+          <button onClick={() => window.location.href = "/Dashboard"} className="w-full h-14 bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-2xl font-bold text-base transition-all duration-300 shadow-lg shadow-slate-200/50 transform active:scale-[0.98]">
             Login
           </button>
         </div>

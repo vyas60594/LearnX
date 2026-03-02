@@ -4,7 +4,9 @@
 // On mobile: slides in/out using isOpen prop
 // =====================================================
 
-const SideBar = ({ isOpen, setIsOpen }) => {
+import { Link } from "react-router";
+
+const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
   return (
     // Sidebar panel - fixed on left, slides in on mobile, always visible on desktop
     <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-100 flex flex-col transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
@@ -37,21 +39,27 @@ const SideBar = ({ isOpen, setIsOpen }) => {
         <div>
           <p className="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dashboard</p>
 
-          {/* Overview - active (blue background) */}
-          <button className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all">
+          {/* Overview - active when activePage === 'dashboard' */}
+          <Link to="/Dashboard" className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${activePage === 'dashboard'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+            }`}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
               <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             <span>Overview</span>
-          </button>
+          </Link>
 
-          {/* Progress Reports - inactive */}
-          <button className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all mt-1">
+          {/* Progress Reports - active when activePage === 'progress-reports' */}
+          <Link to="/progress-reports" className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all mt-1 ${activePage === 'progress-reports'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+            }`}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
               <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <span>Progress Reports</span>
-          </button>
+          </Link>
         </div>
 
         {/* GROUP 2: Learning */}

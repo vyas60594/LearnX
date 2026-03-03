@@ -1,11 +1,10 @@
-import React from 'react';
-import Navbar from '../components/layout/Navbar';
-import Hero from '../components/home/Hero';
-import Stats from '../components/home/Stats';
-import Features from '../components/home/Features';
-import SkillPaths from '../components/home/SkillPaths';
+import CertificationSection from '../components/home/CertificationSection';
 import CTASection from '../components/home/CTASection';
+import Features from '../components/home/Features';
+import Hero from '../components/home/Hero';
+import SkillPaths from '../components/home/SkillPaths';
 import Footer from '../components/layout/Footer';
+import Navbar from '../components/layout/Navbar';
 
 const Home = () => {
     return (
@@ -13,9 +12,9 @@ const Home = () => {
             <Navbar />
             <main className="flex-grow">
                 <Hero />
-                <Stats />
                 <Features />
                 <SkillPaths />
+                <CertificationSection />
                 <CTASection />
             </main>
             <Footer />

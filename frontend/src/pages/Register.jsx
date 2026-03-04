@@ -1,90 +1,92 @@
+// =============================================================
+//  Register.jsx — New student registration page
+//  Collects full name, email, password, and confirm password.
+// =============================================================
+
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import logo from '../assets/learnx_logo.svg';
 
 const Register = () => {
-    const [fullname, setfullname] = useState('')
+    const navigate = useNavigate();
+
+    const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleRegister = () => {
+        // TODO: validate fields, call register API, then redirect
+        navigate('/Dashboard');
+    };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-            {/* Logo Section */}
+        <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 p-4">
+
+            {/* ── Logo ── */}
             <div className="mb-8 flex flex-col items-center">
                 <div className="flex items-center justify-center transition-transform duration-300 hover:scale-110">
-                    <img
-                        src={logo}
-                        alt="LearnX Logo"
-                        className="w-20 h-20 object-contain"
-                    />
+                    <img src={logo} alt="LearnX Logo" className="h-20 w-20 object-contain" />
                 </div>
-                <h1 className="mt-2 text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h1 className="mt-2 bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-3xl font-bold text-transparent">
                     LearnX
                 </h1>
-                <p className="text-slate-500 text-sm mt-1 uppercase tracking-wider font-medium">Job-Oriented Learning Platform</p>
+                <p className="mt-1 text-sm font-medium uppercase tracking-wider text-slate-500">
+                    Job-Oriented Learning Platform
+                </p>
             </div>
 
-            {/* Login Card */}
-            <div className="w-full max-w-[440px] bg-white rounded-3xl shadow-xl shadow-slate-200/60 p-8 border border-slate-100">
+            {/* ── Register card ── */}
+            <div className="w-full max-w-[440px] rounded-3xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/60">
                 <div className="mb-8">
                     <h2 className="text-2xl font-bold text-slate-900">Create Account</h2>
-                    <p className="text-slate-400 mt-1">Register as a student to access courses</p>
+                    <p className="mt-1 text-slate-400">Register as a student to access courses</p>
                 </div>
 
                 {/* Form */}
                 <div className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-bold text-slate-800 mb-2">Full Name</label>
-                        <input type="text"
-                        value={fullname}
-                        onChange={(e) => setfullname(e.target.value)}
+                    <FormField
+                        label="Full Name"
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
                         placeholder="John Doe"
-                        className="w-full h-14 px-5 rounded-2xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 transition-all duration-300 shadow-sm"                            
-                        
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold text-slate-800 mb-2">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="student@learnx.com"
-                            className="w-full h-14 px-5 rounded-2xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 transition-all duration-300 shadow-sm"
-                        />
-                    </div>
+                    />
+                    <FormField
+                        label="Email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="student@learnx.com"
+                    />
+                    <FormField
+                        label="Password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                    />
+                    <FormField
+                        label="Confirm Password"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••"
+                    />
 
-                    <div>
-                        <label className="block text-sm font-bold text-slate-800 mb-2">Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            className="w-full h-14 px-5 rounded-2xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 transition-all duration-300 shadow-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold text-slate-800 mb-2">Confirm Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            className="w-full h-14 px-5 rounded-2xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 transition-all duration-300 shadow-sm"
-                        />
-                    </div>
-
-                    <button className="w-full h-14 bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-2xl font-bold text-base transition-all duration-300 shadow-lg shadow-slate-200/50 transform active:scale-[0.98]">
+                    <button
+                        onClick={handleRegister}
+                        className="h-14 w-full rounded-2xl bg-slate-900 text-base font-bold text-white shadow-lg shadow-slate-200/50 transition-all duration-300 hover:bg-slate-800 active:scale-[0.98]"
+                    >
                         Register
                     </button>
                 </div>
 
-                {/* Footer */}
+                {/* Footer link */}
                 <div className="mt-8 text-center">
-                    <p className="text-slate-500 font-medium">
+                    <p className="font-medium text-slate-500">
                         Already have an account?{' '}
-                        <Link to="/login" className="text-blue-600 hover:text-blue-700 font-bold transition-colors">
+                        <Link to="/login" className="font-bold text-blue-600 transition-colors hover:text-blue-700">
                             Login
                         </Link>
                     </p>
@@ -93,5 +95,21 @@ const Register = () => {
         </div>
     );
 };
+
+// Reusable labelled input — avoids repeating the same className block
+function FormField({ label, type, value, onChange, placeholder }) {
+    return (
+        <div>
+            <label className="mb-2 block text-sm font-bold text-slate-800">{label}</label>
+            <input
+                type={type}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className="h-14 w-full rounded-2xl border border-slate-200 bg-white px-5 text-slate-900 shadow-sm placeholder:text-slate-400 transition-all duration-300 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/10"
+            />
+        </div>
+    );
+}
 
 export default Register;

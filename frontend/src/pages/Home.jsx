@@ -1,3 +1,9 @@
+// =============================================================
+//  Home.jsx — Public landing page
+//  Composed of section components: Hero, Features, SkillPaths,
+//  CertificationSection, CTASection, wrapped in Navbar + Footer.
+// =============================================================
+
 import CertificationSection from '../components/home/CertificationSection';
 import CTASection from '../components/home/CTASection';
 import Features from '../components/home/Features';
@@ -8,7 +14,7 @@ import Navbar from '../components/layout/Navbar';
 
 const Home = () => {
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="flex min-h-screen flex-col">
             <Navbar />
             <main className="flex-grow">
                 <Hero />

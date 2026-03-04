@@ -1,148 +1,199 @@
-// =====================================================
-// SideBar.jsx - Left navigation panel
-// Shows: logo, menu links grouped by section, footer stats
-// On mobile: slides in/out using isOpen prop
-// =====================================================
+// =============================================================
+//  SideBar.jsx
+//  Fixed left navigation panel.
+//  On desktop: always visible (256 px wide).
+//  On mobile:  slides in/out via the isOpen prop.
+// =============================================================
 
-import { Link } from "react-router";
+import { Link } from 'react-router';
+
+// =============================================================
+//  NAV ITEMS
+//  Each entry maps to one clickable row in the sidebar.
+//  `to`      → the React Router path
+//  `key`     → matched against the `activePage` prop
+//  `label`   → display text
+//  `icon`    → which SVG to render (handled by NavIcon below)
+// =============================================================
+
+const MAIN_NAV = [
+  { key: 'dashboard', label: 'Dashboard', to: '/Dashboard', icon: 'dashboard' },
+  { key: 'skill-paths', label: 'Skill Paths', to: '/skill-paths', icon: 'skill-paths' },
+  { key: 'practice-tests', label: 'Practice Tests', to: '/practice-tests', icon: 'practice-tests' },
+  { key: 'progress', label: 'Progress', to: '/progress-reports', icon: 'progress' },
+  { key: 'certificates', label: 'Certificates', to: '/certificates', icon: 'certificates' },
+  { key: 'announcements', label: 'Announcements', to: '/announcements', icon: 'announcements' },
+  { key: 'profile', label: 'Profile', to: '/profile', icon: 'profile' },
+];
+
+const BOTTOM_NAV = [
+  { key: 'settings', label: 'Settings', to: '/settings', icon: 'settings' },
+  { key: 'logout', label: 'Logout', to: '/logout', icon: 'logout' },
+];
+
+// =============================================================
+//  COMPONENT
+// =============================================================
 
 const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
   return (
-    // Sidebar panel - fixed on left, slides in on mobile, always visible on desktop
-    <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-100 flex flex-col transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
+    <aside
+      className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-100 bg-white transition-transform duration-300
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+    >
 
-      {/* ── LOGO SECTION ── */}
-      <div className="p-6 flex items-center justify-between">
-        {/* Logo icon + brand name */}
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-              <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
-              <path d="M22 10v6"></path>
-              <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
-            </svg>
+      {/* ── Logo header ── */}
+      <div className="flex items-center justify-between px-5 py-5">
+        <div className="flex items-center gap-3">
+          {/* "LX" square logo mark */}
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-sm font-extrabold text-white shadow">
+            LX
           </div>
-          <span className="text-xl font-bold text-indigo-600">LearnX</span>
+          <span className="text-lg font-bold text-slate-900">LearnX</span>
         </div>
-        {/* Close button - only visible on mobile */}
-        <button onClick={() => setIsOpen(false)} className="lg:hidden p-2 text-slate-400">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-            <path d="M6 18L18 6M6 6l12 12" />
+
+        {/* Collapse chevron (desktop) / close X (mobile) */}
+        <button
+          onClick={() => setIsOpen(false)}
+          className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          {/* Chevron left icon */}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       </div>
 
-      {/* ── NAVIGATION MENU LINKS ── */}
-      <div className="flex-1 px-4 py-2 space-y-6 overflow-y-auto no-scrollbar">
+      {/* ── Main navigation links ── */}
+      <nav className="no-scrollbar flex-1 overflow-y-auto px-3 py-2">
+        <ul className="space-y-0.5">
+          {MAIN_NAV.map((item) => (
+            <li key={item.key}>
+              <NavItem item={item} isActive={activePage === item.key} />
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-        {/* GROUP 1: Dashboard */}
-        <div>
-          <p className="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dashboard</p>
-
-          {/* Overview - active when activePage === 'dashboard' */}
-          <Link to="/Dashboard" className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${activePage === 'dashboard'
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-            }`}>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <span>Overview</span>
-          </Link>
-
-          {/* Progress Reports - active when activePage === 'progress-reports' */}
-          <Link to="/progress-reports" className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all mt-1 ${activePage === 'progress-reports'
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-            }`}>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <span>Progress Reports</span>
-          </Link>
-        </div>
-
-        {/* GROUP 2: Learning */}
-        <div>
-          <p className="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Learning</p>
-
-          {/* Learning Center - has a blue dot indicator (new content) */}
-          <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all">
-            <div className="flex items-center space-x-3">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-              </svg>
-              <span>Learning Center</span>
-            </div>
-            {/* Blue dot = new activity indicator */}
-            <div className="w-2 h-2 rounded-full bg-blue-500" />
-          </button>
-
-          {/* My Learning */}
-          <button className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all mt-1">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            <span>My Learning</span>
-          </button>
-        </div>
-
-        {/* GROUP 3: Assessment */}
-        <div>
-          <p className="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assessment</p>
-
-          {/* Practice Tests */}
-          <button className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
-            <span>Practice Tests</span>
-          </button>
-
-          {/* Test History */}
-          <button className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all mt-1">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span>Test History</span>
-          </button>
-        </div>
-
-        {/* GROUP 4: General */}
-        <div>
-          <p className="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">General</p>
-
-          {/* Announcements */}
-          <button className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span>Announcements</span>
-          </button>
-
-          {/* Settings */}
-          <button className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all mt-1">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span>Settings</span>
-          </button>
-        </div>
+      {/* ── Bottom: Settings + Logout ── */}
+      <div className="border-t border-slate-100 px-3 py-4">
+        <ul className="space-y-0.5">
+          {BOTTOM_NAV.map((item) => (
+            <li key={item.key}>
+              <NavItem item={item} isActive={activePage === item.key} />
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* ── FOOTER: Quick stats at the bottom of sidebar ── */}
-      <div className="p-4 bg-slate-50 border-t border-slate-100">
-        <div className="flex justify-between text-xs mb-2">
-          <span className="text-slate-500">Active Modules</span>
-          <span className="font-bold">7</span>
-        </div>
-        <div className="flex justify-between text-xs">
-          <span className="text-slate-500">Last Login</span>
-          <span className="font-bold">Today</span>
-        </div>
-      </div>
     </aside>
   );
 };
+
+// =============================================================
+//  NAV ITEM
+//  A single clickable row — highlighted when active.
+// =============================================================
+
+function NavItem({ item, isActive }) {
+  const base = 'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all';
+  const active = 'bg-indigo-50 text-indigo-600';
+  const idle = 'text-slate-600 hover:bg-slate-50 hover:text-slate-900';
+
+  return (
+    <Link to={item.to} className={`${base} ${isActive ? active : idle}`}>
+      <NavIcon name={item.icon} isActive={isActive} />
+      {item.label}
+    </Link>
+  );
+}
+
+// =============================================================
+//  NAV ICON
+//  Returns the correct SVG for each nav item.
+//  Active icons are drawn in indigo; idle icons in slate-400.
+// =============================================================
+
+function NavIcon({ name, isActive }) {
+  const color = isActive ? '#4f46e5' : '#94a3b8'; // indigo-600 : slate-400
+  const props = {
+    width: '18', height: '18',
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: color,
+    strokeWidth: '1.9',
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+  };
+
+  const icons = {
+    // Four squares (app grid)
+    'dashboard': (
+      <svg {...props}>
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+      </svg>
+    ),
+    // Open book
+    'skill-paths': (
+      <svg {...props}>
+        <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
+        <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
+      </svg>
+    ),
+    // Science flask / beaker
+    'practice-tests': (
+      <svg {...props}>
+        <path d="M9 3h6M9 3v7.5L5.5 17A2 2 0 007.3 20h9.4a2 2 0 001.8-3L15 10.5V3" />
+      </svg>
+    ),
+    // Trending up arrow
+    'progress': (
+      <svg {...props}>
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+        <polyline points="16 7 22 7 22 13" />
+      </svg>
+    ),
+    // Ribbon / award
+    'certificates': (
+      <svg {...props}>
+        <circle cx="12" cy="8" r="5" />
+        <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
+      </svg>
+    ),
+    // Megaphone
+    'announcements': (
+      <svg {...props}>
+        <path d="M3 11l19-9-9 19-2-8-8-2z" />
+      </svg>
+    ),
+    // User silhouette
+    'profile': (
+      <svg {...props}>
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    ),
+    // Gear / cog
+    'settings': (
+      <svg {...props}>
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+      </svg>
+    ),
+    // Arrow right out of box (logout)
+    'logout': (
+      <svg {...props}>
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" y1="12" x2="9" y2="12" />
+      </svg>
+    ),
+  };
+
+  return icons[name] ?? null;
+}
 
 export default SideBar;

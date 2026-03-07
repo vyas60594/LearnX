@@ -1,10 +1,7 @@
-// =============================================================
-//  App.jsx — Root router
-//  Maps URL paths to page components.
-// =============================================================
-
 import { Route, Routes } from 'react-router';
+import CheckEmail from './pages/CheckEmail';
 import Dashboard from './pages/Dashboard';
+import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -16,6 +13,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/check-email" element={<CheckEmail />} />
             <Route path="/Dashboard" element={<Dashboard />} />
 
             <Route path="/skill-paths" element={<SkillPaths />} />

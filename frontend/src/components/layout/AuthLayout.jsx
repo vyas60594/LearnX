@@ -8,8 +8,8 @@ const AuthLayout = ({ children, illustration, title, subtitle }) => {
                 <div className="flex w-full max-w-md flex-col items-center">
                     {/* Logo Header */}
                     <div className="mb-12 flex w-full items-center justify-start gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md">
-                            <img src={logo} alt="LearnX Logo" className="h-8 w-8 object-contain brightness-0 invert" />
+                        <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-md">
+                            <img src={logo} alt="LearnX Logo" />
                         </div>
                         <span className="text-2xl font-bold tracking-tight text-white">LearnX</span>
                     </div>

@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import image1 from '../assets/image1.png';
 import AuthLayout from '../components/layout/AuthLayout';
 
 const Register = () => {
@@ -22,20 +23,7 @@ const Register = () => {
     };
 
     const registerIllustration = (
-        <svg viewBox="0 0 400 300" className="w-full h-full drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="50" y="50" width="300" height="200" rx="12" fill="white" fillOpacity="0.1" />
-            <rect x="70" y="70" width="80" height="80" rx="8" fill="white" fillOpacity="0.2" />
-            <rect x="160" y="70" width="170" height="15" rx="5" fill="white" fillOpacity="0.3" />
-            <rect x="160" y="95" width="120" height="15" rx="5" fill="white" fillOpacity="0.1" />
-
-            <rect x="70" y="170" width="260" height="60" rx="8" fill="white" fillOpacity="0.15" />
-            <rect x="85" y="185" width="30" height="30" rx="15" fill="white" fillOpacity="0.4" />
-            <rect x="125" y="190" width="100" height="8" rx="4" fill="white" fillOpacity="0.2" />
-            <rect x="125" y="205" width="60" height="8" rx="4" fill="white" fillOpacity="0.1" />
-
-            <circle cx="280" cy="140" r="40" fill="white" fillOpacity="0.05" />
-            <path d="M260 140L275 155L310 120" stroke="white" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
-        </svg>
+        <img src={image1} alt="" />
     );
 
     return (

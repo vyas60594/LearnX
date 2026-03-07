@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import image2 from '../assets/image2.png';
 import AuthLayout from '../components/layout/AuthLayout';
 
 const Login = () => {
@@ -22,20 +23,7 @@ const Login = () => {
   };
 
   const loginIllustration = (
-    <svg viewBox="0 0 400 300" className="w-full h-full drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="50" y="200" width="300" height="10" rx="5" fill="white" fillOpacity="0.1" />
-      <rect x="80" y="80" width="240" height="160" rx="12" fill="white" fillOpacity="0.2" />
-      <rect x="100" y="110" width="80" height="10" rx="5" fill="white" fillOpacity="0.4" />
-      <rect x="100" y="130" width="120" height="10" rx="5" fill="white" fillOpacity="0.2" />
-      <rect x="100" y="150" width="100" height="10" rx="5" fill="white" fillOpacity="0.2" />
-      <circle cx="280" cy="140" r="30" fill="white" fillOpacity="0.3" />
-      <path d="M260 140L275 155L300 130" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="140" y="50" width="40" height="40" rx="8" fill="white" fillOpacity="0.1" />
-      <path d="M150 65L160 75L170 65" stroke="white" strokeWidth="2" strokeLinecap="round" />
-      {/* Abstract person */}
-      <circle cx="200" cy="100" r="20" fill="white" fillOpacity="0.5" />
-      <path d="M170 160C170 140 230 140 230 160V180H170V160Z" fill="white" fillOpacity="0.5" />
-    </svg>
+    <img src={image2} alt="" />
   );
 
   return (

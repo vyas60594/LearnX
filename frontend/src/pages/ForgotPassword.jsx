@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import image3 from '../assets/image3.png';
 import AuthLayout from '../components/layout/AuthLayout';
 
 const ForgotPassword = () => {
@@ -13,20 +14,7 @@ const ForgotPassword = () => {
     };
 
     const stairIllustration = (
-        <svg viewBox="0 0 400 300" className="w-full h-full drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 250H100V220H150V190H200V160H250V130H300V100H350V250H50Z" fill="white" fillOpacity="0.1" />
-            <path d="M50 250H100V220H150V190H200V160H250V130H300V100" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.4" />
-
-            {/* Abstract person climbing */}
-            <circle cx="210" cy="130" r="10" fill="white" fillOpacity="0.6" />
-            <path d="M210 140L210 155M210 155L200 170M210 155L220 170M210 145L200 140M210 145L220 140" stroke="white" strokeWidth="3" strokeLinecap="round" />
-
-            {/* Trophy at top */}
-            <path d="M315 70H335V85C335 90.5228 330.523 95 325 95C319.477 95 315 90.5228 315 85V70Z" fill="#FDE047" fillOpacity="0.8" />
-            <rect x="323" y="95" width="4" height="10" fill="#FDE047" fillOpacity="0.8" />
-            <rect x="318" y="105" width="14" height="4" fill="#FDE047" fillOpacity="0.8" />
-            <path d="M315 75L310 80V85L315 80M335 75L340 80V85L335 80" stroke="#FDE047" strokeWidth="2" strokeOpacity="0.8" />
-        </svg>
+        <img src={image3} alt="" />
     );
 
     return (

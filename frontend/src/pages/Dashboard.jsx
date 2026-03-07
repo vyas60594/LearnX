@@ -5,10 +5,11 @@
 // =============================================================
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import aptImg from '../assets/aptitude.png';
 import dsaImg from '../assets/image1.png';
 import pythonImg from '../assets/pythondev.png';
-import sqlImg from '../assets/sql_developer.png';
+import sql from '../assets/sql.png';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
 
@@ -27,7 +28,7 @@ const STAT_CARDS = [
 
 const SKILL_PATHS = [
   { name: 'Python Developer', img: pythonImg, modules: '5/12', pct: 42, color: '#4f46e5' },
-  { name: 'SQL Developer', img: sqlImg, modules: '0/10', pct: 0, color: '#6366f1' },
+  { name: 'SQL Developer', img: sql, modules: '0/10', pct: 0, color: '#6366f1' },
   { name: 'Data Structures & Algorithms', img: dsaImg, modules: '0/14', pct: 0, color: '#8b5cf6' },
   { name: 'Aptitude Preparation', img: aptImg, modules: '0/9', pct: 0, color: '#a78bfa' },
 ];
@@ -125,6 +126,7 @@ export default function Dashboard() {
 
 // "Welcome back, Arjun 👋" heading + Browse Paths button
 function WelcomeHeader() {
+  const navigate = useNavigate();
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <div>
@@ -136,7 +138,7 @@ function WelcomeHeader() {
         </p>
       </div>
 
-      <button className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-700 active:scale-95 transition-all">
+      <button onClick={() => navigate("/skill-paths")} className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-700 active:scale-95 transition-all">
         {/* 4-square grid icon */}
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
           <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -182,12 +184,13 @@ function OverallProgressCard() {
 
 // White card listing all enrolled paths with progress bars
 function ActiveSkillPathsCard() {
+  const navigate = useNavigate();
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       {/* Header row */}
       <div className="mb-5 flex items-center justify-between">
         <h2 className="text-base font-bold text-gray-900">Active Skill Paths</h2>
-        <button className="flex items-center gap-1 text-xs font-semibold text-indigo-500 hover:underline">
+        <button onClick={() => navigate("/skill-paths")} className="flex items-center gap-1 text-xs font-semibold text-indigo-500 hover:underline">
           View All
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M9 18l6-6-6-6" />
@@ -198,7 +201,11 @@ function ActiveSkillPathsCard() {
       {/* One row per skill path */}
       <div className="flex flex-col divide-y divide-gray-50">
         {SKILL_PATHS.map((path) => (
-          <SkillPathRow key={path.name} path={path} />
+          <SkillPathRow
+            key={path.name}
+            path={path}
+            onClick={() => navigate("/skill-paths")}
+          />
         ))}
       </div>
     </div>
@@ -303,7 +310,7 @@ function AnnouncementsCard() {
 // =============================================================
 //  REUSABLE SMALL COMPONENTS
 // =============================================================
-
+  
 // Single stat summary card (icon + value + label)
 function StatCard({ card }) {
   return (
@@ -319,9 +326,12 @@ function StatCard({ card }) {
 }
 
 // Single row in the Active Skill Paths list
-function SkillPathRow({ path }) {
+function SkillPathRow({ path, onClick }) {
   return (
-    <div className="flex items-center gap-3 py-3">
+    <div
+      onClick={onClick}
+      className="flex cursor-pointer items-center gap-3 py-3 transition-colors hover:bg-slate-50/50 rounded-lg px-2 -mx-2"
+    >
       {/* Square course thumbnail image */}
       <img
         src={path.img}

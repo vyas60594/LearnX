@@ -41,7 +41,7 @@ export default function StatCard({ card }) {
         <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
             <StatIcon type={card.icon} color={card.color} />
             <div>
-                <p className="text-2xl font-extrabold leading-none text-gray-900">{card.value}</p>
+                <p className="text-2xl font-bold leading-none text-gray-900">{card.value}</p>
                 <p className="mt-1.5 text-xs text-gray-400">{card.label}</p>
             </div>
         </div>

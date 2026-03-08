@@ -1,4 +1,4 @@
-export default function ResultView({ testResult, onClose }) {
+export default function ResultView({ testResult, onClose, onRetry }) {
     if (!testResult) return null;
 
     return (
@@ -53,7 +53,7 @@ export default function ResultView({ testResult, onClose }) {
                         </div>
 
                         <div className="mt-8 flex flex-col gap-3 w-full">
-                            <button onClick={onClose} className="w-full py-4 bg-indigo-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 hover:bg-slate-900 transition-all">
+                            <button onClick={onRetry} className="w-full py-4 bg-indigo-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 hover:bg-slate-900 transition-all">
                                 Retry Test
                             </button>
                             <button onClick={onClose} className="w-full py-4 bg-white border-2 border-slate-100 text-slate-600 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:border-indigo-100 transition-all">

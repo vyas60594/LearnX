@@ -68,7 +68,8 @@ export default function SkillPathDetail() {
             correct: correctCount,
             total: questions.length,
             passed: score >= 90,
-            testName: activeTest.title
+            testName: activeTest.title,
+            originalTest: activeTest // Store test data for retry functionality
         });
         setActiveTest(null);
     };
@@ -83,7 +84,13 @@ export default function SkillPathDetail() {
 
     // Sub-views rendering
     if (testResult) {
-        return <ResultView testResult={testResult} onClose={() => setTestResult(null)} />;
+        return (
+            <ResultView
+                testResult={testResult}
+                onClose={() => setTestResult(null)}
+                onRetry={() => handleTakeTest(testResult.originalTest)}
+            />
+        );
     }
 
     if (activeTest) {

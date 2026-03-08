@@ -21,7 +21,7 @@ export default function TestView({
                     <div className="flex items-center gap-6">
                         <div className="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold italic tracking-tighter">LX</div>
                         <div>
-                            <h2 className="text-sm font-black text-slate-800 tracking-tight">{activeTest.title}</h2>
+                            <h2 className="text-sm font-bold text-slate-800 tracking-tight">{activeTest.title}</h2>
                             <div className="flex items-center gap-3 mt-0.5">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{questions.length} Questions</span>
                                 <div className="h-1 w-1 bg-slate-200 rounded-full"></div>
@@ -40,7 +40,7 @@ export default function TestView({
                         </div>
                         <div className="flex items-center gap-3 bg-slate-50 px-6 py-2.5 rounded-2xl border border-slate-100">
                             <svg className="w-5 h-5 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
-                            <span className="text-lg font-black text-slate-700 font-mono tracking-tighter">{formatTime(timeLeft)}</span>
+                            <span className="text-lg font-bold text-slate-700 font-mono tracking-tighter">{formatTime(timeLeft)}</span>
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ export default function TestView({
                     <div className="bg-white rounded-[40px] border border-slate-100 p-12 flex flex-col relative overflow-hidden">
                         <div className="flex-1">
                             <span className="text-[11px] font-black text-indigo-600 uppercase tracking-widest">Question {currentQuestionIdx + 1} of {questions.length}</span>
-                            <h3 className="text-2xl font-extrabold text-slate-800 mt-6 leading-tight max-w-4xl tracking-tight">
+                            <h3 className="text-2xl font-bold text-slate-800 mt-6 leading-tight max-w-4xl tracking-tight">
                                 {currentQ?.question}
                             </h3>
 

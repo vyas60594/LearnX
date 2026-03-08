@@ -13,7 +13,7 @@ export default function PathHeader({ path, onBack }) {
 
                     <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <h1 className="text-3xl font-extrabold text-slate-900 tracking-[-0.03em]">{path.title}</h1>
+                            <h1 className="text-3xl font-bold text-slate-900 tracking-[-0.03em]">{path.title}</h1>
                             <div className="flex gap-1.5 ml-2">
                                 {path.tags.map(tag => (
                                     <span key={tag} className="text-[10px] font-bold text-slate-400 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-full uppercase tracking-widest">
@@ -46,7 +46,7 @@ export default function PathHeader({ path, onBack }) {
                         <div className="mt-8">
                             <div className="flex items-center justify-between mb-2 text-[10px] font-bold uppercase tracking-widest">
                                 <span className="text-slate-400">Mastery Progress</span>
-                                <span className="text-[#4f46e5] font-extrabold">{path.progress}%</span>
+                                <span className="text-[#4f46e5] font-bold">{path.progress}%</span>
                             </div>
                             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
                                 <div

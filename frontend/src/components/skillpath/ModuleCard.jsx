@@ -12,9 +12,9 @@ export default function ModuleCard({ mod, levelStatus, onStart, onReview }) {
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1">
-                    <h4 className="text-[15px] font-extrabold text-slate-800 truncate tracking-tight">{mod.title}</h4>
+                    <h4 className="text-[15px] font-bold text-slate-800 truncate tracking-tight">{mod.title}</h4>
                     {mod.status && (
-                        <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-wider ${mod.color === 'green' ? 'bg-emerald-100 text-emerald-600' : mod.color === 'blue' ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-50 text-blue-500'}`}>
+                        <span className={`px-2 py-0.5 rounded-lg text-[8px] font-bold uppercase tracking-wider ${mod.color === 'green' ? 'bg-emerald-100 text-emerald-600' : mod.color === 'blue' ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-50 text-blue-500'}`}>
                             {mod.status}
                         </span>
                     )}

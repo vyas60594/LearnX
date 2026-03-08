@@ -5,6 +5,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import SkillPathDetail from './pages/SkillPathDetail';
 import SkillPaths from './pages/SkillPaths';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route path="/Dashboard" element={<Dashboard />} />
 
             <Route path="/skill-paths" element={<SkillPaths />} />
+            <Route path="/skill-path/:id" element={<SkillPathDetail />} />
         </Routes>
     );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 // Components
@@ -26,9 +26,32 @@ export default function SkillPathDetail() {
     const [testResult, setTestResult] = useState(null);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState({});
-    const [timeLeft, setTimeLeft] = useState(1184); // 19:44 in seconds
+    const [timeLeft, setTimeLeft] = useState(1184);
+
+    // Track which level the active mastery test belongs to
+    const activeLevelIdxRef = useRef(null);
 
     const path = getPathData(id);
+
+    // ── Unlocked Levels ─────────────────────────────────────────────
+    // Persisted to localStorage per path so progress survives page refresh.
+    // Format: [0] = index of unlocked levels; level 0 always starts unlocked.
+    const storageKey = `learnx_unlocked_${id}`;
+
+    const getInitialUnlocked = () => {
+        try {
+            const saved = localStorage.getItem(storageKey);
+            if (saved) return JSON.parse(saved);
+        } catch (_) { /* ignore */ }
+        return [0]; // level 0 always unlocked by default
+    };
+
+    const [unlockedLevels, setUnlockedLevels] = useState(getInitialUnlocked);
+
+    useEffect(() => {
+        localStorage.setItem(storageKey, JSON.stringify(unlockedLevels));
+    }, [unlockedLevels, storageKey]);
+    // ────────────────────────────────────────────────────────────────
 
     // Timer effect for tests
     useEffect(() => {
@@ -47,7 +70,8 @@ export default function SkillPathDetail() {
         return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
 
-    const handleTakeTest = (test) => {
+    const handleTakeTest = (test, levelIdx = null) => {
+        activeLevelIdxRef.current = levelIdx;
         setActiveTest(test);
         setCurrentQuestionIdx(0);
         setSelectedAnswers({});
@@ -63,32 +87,68 @@ export default function SkillPathDetail() {
         });
 
         const score = Math.round((correctCount / questions.length) * 100);
+        const passed = score >= 90;
+        const currentLevelIdx = activeLevelIdxRef.current;
+        const isMasteryTest = currentLevelIdx !== null;
+
+        let nextLevelName = null;
+        let nextLevelIdx = null;
+
+        // If passed a mastery test with 90%+, unlock the next level
+        if (passed && isMasteryTest) {
+            const nextIdx = currentLevelIdx + 1;
+            if (nextIdx < path.levels.length) {
+                nextLevelIdx = nextIdx;
+                nextLevelName = path.levels[nextIdx].title;
+                setUnlockedLevels(prev =>
+                    prev.includes(nextIdx) ? prev : [...prev, nextIdx]
+                );
+            }
+        }
+
         setTestResult({
             score,
             correct: correctCount,
             total: questions.length,
-            passed: score >= 90,
+            passed,
             testName: activeTest.title,
-            originalTest: activeTest // Store test data for retry functionality
+            originalTest: activeTest,
+            currentLevelIdx,
+            nextLevelIdx,
+            nextLevelName,
         });
         setActiveTest(null);
     };
 
-    const handleStartModule = (mod) => {
+    const handleStartModule = (mod, levelIdx) => {
         if (mod.type === 'test') {
-            handleTakeTest(mod);
+            handleTakeTest(mod, levelIdx);
         } else {
             setViewingModule(mod);
         }
     };
 
-    // Sub-views rendering
+    // Merge static data with dynamic unlock status
+    const levelsWithStatus = path.levels.map((level, idx) => ({
+        ...level,
+        status: unlockedLevels.includes(idx) ? 'current' : 'locked',
+    }));
+
+    const allLevelsUnlocked = unlockedLevels.length >= path.levels.length;
+
+    // ── Sub-view rendering ───────────────────────────────────────────
     if (testResult) {
         return (
             <ResultView
                 testResult={testResult}
                 onClose={() => setTestResult(null)}
-                onRetry={() => handleTakeTest(testResult.originalTest)}
+                onRetry={() => handleTakeTest(testResult.originalTest, testResult.currentLevelIdx)}
+                nextLevelName={testResult.nextLevelName}
+                onNextLevel={
+                    testResult.nextLevelIdx !== null && testResult.nextLevelIdx !== undefined
+                        ? () => setTestResult(null)
+                        : null
+                }
             />
         );
     }
@@ -151,14 +211,14 @@ export default function SkillPathDetail() {
 
                     {/* Levels Section */}
                     <div className="space-y-12">
-                        {path.levels.map((level, idx) => (
+                        {levelsWithStatus.map((level, idx) => (
                             <LevelSection
                                 key={level.id}
                                 level={level}
                                 index={idx}
-                                onStartModule={handleStartModule}
+                                onStartModule={(mod) => handleStartModule(mod, idx)}
                                 onReviewModule={setViewingModule}
-                                onTakeMasteryTest={handleTakeTest}
+                                onTakeMasteryTest={(test) => handleTakeTest(test, idx)}
                             />
                         ))}
                     </div>
@@ -172,12 +232,23 @@ export default function SkillPathDetail() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black text-slate-800 tracking-tight">Complete All Levels → Earn Certificate</h3>
-                                    <p className="text-sm font-bold text-slate-500 mt-1 italic">Finish all 3 architectural levels and pass every mastery verification.</p>
+                                    <p className="text-sm font-bold text-slate-500 mt-1 italic">Finish all {path.levels.length} architectural levels and pass every mastery verification.</p>
                                 </div>
                             </div>
-                            <button className="px-8 py-4 bg-amber-200 text-amber-800 text-xs font-black rounded-xl border border-amber-300 opacity-60 cursor-not-allowed uppercase tracking-widest flex items-center gap-2">
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                Locked
+                            <button
+                                disabled={!allLevelsUnlocked}
+                                className={`px-8 py-4 text-xs font-black rounded-xl border uppercase tracking-widest flex items-center gap-2 transition-all ${allLevelsUnlocked
+                                        ? 'bg-amber-500 text-white border-amber-600 shadow-xl shadow-amber-200 hover:bg-amber-600 active:scale-95 cursor-pointer'
+                                        : 'bg-amber-200 text-amber-800 border-amber-300 opacity-60 cursor-not-allowed'
+                                    }`}
+                            >
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                    {allLevelsUnlocked
+                                        ? <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                        : <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" strokeLinecap="round" strokeLinejoin="round" />
+                                    }
+                                </svg>
+                                {allLevelsUnlocked ? 'Claim Certificate' : 'Locked'}
                             </button>
                         </div>
                     </div>

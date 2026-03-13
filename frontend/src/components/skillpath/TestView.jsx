@@ -86,11 +86,11 @@ export default function TestView({
                                             checked={selectedAnswers[currentQuestionIdx] === idx}
                                             onChange={() => setSelectedAnswers(prev => ({ ...prev, [currentQuestionIdx]: idx }))}
                                         />
-                                        <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center mr-6 transition-all ${selectedAnswers[currentQuestionIdx] === idx ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 group-hover:border-indigo-300'}`}>
+                                        <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center mr-6 transition-all ${selectedAnswers[currentQuestionIdx] === idx ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-500 group-hover:border-indigo-300'}`}>
                                             {selectedAnswers[currentQuestionIdx] === idx && <div className="h-2 w-2 rounded-full bg-white"></div>}
                                         </div>
-                                        <span className={`text-[11px] font-black mr-4 ${selectedAnswers[currentQuestionIdx] === idx ? 'text-indigo-600' : 'text-slate-300'}`}>{String.fromCharCode(65 + idx)}.</span>
-                                        <span className={`text-sm font-bold ${selectedAnswers[currentQuestionIdx] === idx ? 'text-slate-900' : 'text-slate-500'}`}>{opt}</span>
+                                        <span className={`text-[11px] font-black mr-4 ${selectedAnswers[currentQuestionIdx] === idx ? 'text-indigo-600' : 'text-slate-700'}`}>{String.fromCharCode(65 + idx)}.</span>
+                                        <span className={`text-sm font-bold ${selectedAnswers[currentQuestionIdx] === idx ? 'text-slate-900' : 'text-slate-700'}`}>{opt}</span>
                                     </label>
                                 ))}
                             </div>
@@ -100,7 +100,7 @@ export default function TestView({
                             <button
                                 onClick={() => setCurrentQuestionIdx(Math.max(0, currentQuestionIdx - 1))}
                                 disabled={currentQuestionIdx === 0}
-                                className={`px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center gap-3 transition-colors ${currentQuestionIdx === 0 ? 'text-slate-200 cursor-not-allowed' : 'text-slate-400 hover:text-indigo-600'}`}
+                                className={`px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center gap-3 transition-colors ${currentQuestionIdx === 0 ? 'text-slate-200 cursor-not-allowed' : 'text-slate-700 hover:text-indigo-600'}`}
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"><path d="M15 19l-7-7 7-7" /></svg>
                                 Previous

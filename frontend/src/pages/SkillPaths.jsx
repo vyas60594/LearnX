@@ -20,7 +20,7 @@ export default function SkillPathsPage() {
                 />
             )}
 
-            <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto lg:pl-64">
+            <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto lg:pl-72">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
                 <main className="flex-1 px-4 py-8 sm:px-6 lg:px-10">

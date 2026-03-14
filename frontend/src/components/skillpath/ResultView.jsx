@@ -54,18 +54,20 @@ export default function ResultView({ testResult, onClose, onRetry, nextLevelName
 
                     {/* ── Left Card: Score Summary ── */}
                     <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
-                        <div className={`absolute top-6 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${testResult.passed ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}`}>
-                            {testResult.passed ? 'Test Passed' : 'Test Failed'}
-                        </div>
+                        {!testResult.isPractice && (
+                            <div className={`absolute top-6 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${testResult.passed ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}`}>
+                                {testResult.passed ? 'Test Passed' : 'Test Failed'}
+                            </div>
+                        )}
 
                         {/* Score Ring */}
                         <div className="mt-12 relative h-48 w-48 flex items-center justify-center">
                             <svg className="transform -rotate-90 w-full h-full">
                                 <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-50" />
                                 <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent"
-                                    strokeDasharray={552.9}
+                                strokeDasharray={552.9}
                                     strokeDashoffset={552.9 - (552.9 * testResult.score) / 100}
-                                    className={testResult.passed ? 'text-emerald-500' : 'text-red-500'}
+                                    className={testResult.isPractice ? 'text-indigo-500' : (testResult.passed ? 'text-emerald-500' : 'text-red-500')}
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -75,7 +77,9 @@ export default function ResultView({ testResult, onClose, onRetry, nextLevelName
                         </div>
 
                         <h2 className="mt-8 text-lg font-extrabold text-slate-800 tracking-tight leading-tight">{testResult.testName}</h2>
-                        <p className="text-[11px] font-bold text-slate-400 mt-1">Passing score: 90%</p>
+                        {!testResult.isPractice && (
+                            <p className="text-[11px] font-bold text-slate-400 mt-1">Passing score: 90%</p>
+                        )}
 
                         {/* Correct / Incorrect counts */}
                         <div className="mt-8 grid grid-cols-2 gap-4 w-full">
@@ -157,18 +161,24 @@ export default function ResultView({ testResult, onClose, onRetry, nextLevelName
                                     <h4 className="text-[11px] font-bold text-amber-800 uppercase tracking-widest">Accuracy Rate</h4>
                                     <div className="text-right">
                                         <span className="text-sm font-black text-amber-900">{testResult.score}%</span>
-                                        <p className="text-[9px] font-bold text-amber-700 uppercase tracking-widest mt-0.5">{testResult.passed ? 'Excellent' : 'Good effort'}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between p-4 bg-red-50/50 border border-red-100/50 rounded-2xl">
-                                    <h4 className="text-[11px] font-bold text-red-800 uppercase tracking-widest">Required to Pass</h4>
-                                    <div className="text-right">
-                                        <span className="text-sm font-black text-red-900">90%</span>
-                                        <p className="text-[9px] font-bold text-red-700 uppercase tracking-widest mt-0.5">
-                                            {testResult.passed ? 'Met ✓' : `Need ${90 - testResult.score}% more`}
+                                        <p className="text-[9px] font-bold text-amber-700 uppercase tracking-widest mt-0.5">
+                                            {testResult.isPractice 
+                                                ? (testResult.score >= 70 ? 'Excellent' : 'Good effort') 
+                                                : (testResult.passed ? 'Excellent' : 'Good effort')}
                                         </p>
                                     </div>
                                 </div>
+                                {!testResult.isPractice && (
+                                    <div className="flex items-center justify-between p-4 bg-red-50/50 border border-red-100/50 rounded-2xl">
+                                        <h4 className="text-[11px] font-bold text-red-800 uppercase tracking-widest">Required to Pass</h4>
+                                        <div className="text-right">
+                                            <span className="text-sm font-black text-red-900">90%</span>
+                                            <p className="text-[9px] font-bold text-red-700 uppercase tracking-widest mt-0.5">
+                                                {testResult.passed ? 'Met ✓' : `Need ${90 - testResult.score}% more`}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Next Level Unlocked info card */}
                                 {levelUnlocked && (

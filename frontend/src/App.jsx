@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router';
 import CheckEmail from './pages/CheckEmail';
+import Certificates from './pages/Certificates';
 import Dashboard from './pages/Dashboard';
 import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
@@ -22,6 +23,7 @@ function App() {
 
             <Route path="/skill-paths" element={<SkillPaths />} />
             <Route path="/skill-path/:id" element={<SkillPathDetail />} />
+            <Route path="/certificates" element={<Certificates />} />
             <Route path="/practice-tests" element={<PracticeTests />} />
             <Route path="/practice-test/:id" element={<PracticeTestPlayer />} />
         </Routes>

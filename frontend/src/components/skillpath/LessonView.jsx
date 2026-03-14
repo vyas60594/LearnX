@@ -12,7 +12,7 @@ export default function LessonView({
     return (
         <div className="flex h-screen overflow-hidden bg-white">
             <SideBar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} activePage="skill-paths" />
-            <div className="flex-1 flex flex-col overflow-y-auto lg:pl-64">
+            <div className="flex-1 flex flex-col overflow-y-auto lg:pl-72">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
                 <main className="p-8 max-w-4xl mx-auto w-full">
                     <button onClick={() => setViewingModule(null)} className="mb-8 flex items-center gap-2 text-slate-400 hover:text-indigo-600 font-bold text-xs uppercase tracking-widest">

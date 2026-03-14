@@ -38,35 +38,36 @@ const BOTTOM_NAV = [
 const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-100 bg-white transition-transform duration-300
+      className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-slate-100 bg-white transition-transform duration-300
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
     >
 
       {/* ── Logo header ── */}
-      <div className="flex items-center justify-between px-5 py-5">
+      <div className="flex items-center justify-between px-6 py-6 mb-2">
         <div className="flex items-center gap-3">
-          {/* "LX" square logo mark */}
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-sm font-extrabold text-white shadow">
+          {/* Constrained, standardized "LX" logo mark */}
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-[13px] font-black italic tracking-tighter text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
             LX
           </div>
-          <span className="text-lg font-bold text-slate-900">LearnX</span>
+          <span className="text-xl font-extrabold text-slate-800 tracking-tight">LearnX</span>
         </div>
 
-        {/* Collapse chevron (desktop) / close X (mobile) */}
+        {/* Close X (mobile only) */}
         <button
           onClick={() => setIsOpen(false)}
-          className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+          className="p-1 text-slate-400 hover:text-slate-600 transition-colors lg:hidden"
         >
-          {/* Chevron left icon */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          {/* X icon */}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       </div>
 
       {/* ── Main navigation links ── */}
-      <nav className="no-scrollbar flex-1 overflow-y-auto px-3 py-2">
-        <ul className="space-y-0.5">
+      <nav className="no-scrollbar flex-1 overflow-y-auto px-4 py-2">
+        <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Main Menu</div>
+        <ul className="space-y-1">
           {MAIN_NAV.map((item) => (
             <li key={item.key}>
               <NavItem item={item} isActive={activePage === item.key} />
@@ -76,8 +77,9 @@ const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
       </nav>
 
       {/* ── Bottom: Settings + Logout ── */}
-      <div className="border-t border-slate-100 px-3 py-4">
-        <ul className="space-y-0.5">
+      <div className="border-t border-slate-100/60 px-4 py-5">
+        <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Account</div>
+        <ul className="space-y-1">
           {BOTTOM_NAV.map((item) => (
             <li key={item.key}>
               <NavItem item={item} isActive={activePage === item.key} />
@@ -96,14 +98,34 @@ const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
 // =============================================================
 
 function NavItem({ item, isActive }) {
-  const base = 'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all';
-  const active = 'bg-indigo-50 text-indigo-600';
-  const idle = 'text-slate-600 hover:bg-slate-50 hover:text-slate-900';
+  const base = 'group relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition-all duration-300 ease-out';
+  
+  // Interactive hover states with transform translations
+  const idle = 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 hover:translate-x-1';
+  
+  // Active state styling: distinct color, subtle gradient background, left accent block
+  const active = 'text-indigo-700 bg-gradient-to-r from-indigo-50 to-white hover:translate-x-1';
 
   return (
     <Link to={item.to} className={`${base} ${isActive ? active : idle}`}>
-      <NavIcon name={item.icon} isActive={isActive} />
-      {item.label}
+      {/* Absolute left accent bar for active item */}
+      {isActive && (
+        <span className="absolute left-0 top-1/2 h-1/2 w-1 -translate-y-1/2 rounded-r-lg bg-indigo-600 shadow-[0_0_10px_rgba(79,70,229,0.4)]" />
+      )}
+      
+      {/* Icon Wrapper allows icon to scale independently on hover */}
+      <div className={`transition-transform duration-300 ease-out ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-indigo-500'}`}>
+        <NavIcon name={item.icon} isActive={isActive} />
+      </div>
+      
+      <span className="tracking-tight">{item.label}</span>
+      
+      {/* Subtle interaction affordance arrow completely hidden unless hovered */}
+      {!isActive && (
+         <svg className="ml-auto w-4 h-4 text-slate-300 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+         </svg>
+      )}
     </Link>
   );
 }
@@ -115,13 +137,15 @@ function NavItem({ item, isActive }) {
 // =============================================================
 
 function NavIcon({ name, isActive }) {
-  const color = isActive ? '#4f46e5' : '#94a3b8'; // indigo-600 : slate-400
+  // Rather than hardcoded `#4f46e5`, setting colors via class inheritance fits the group-hover setup better,
+  // but since SVG stroke is explicitly defined, we will adjust this logic.
+  const color = isActive ? '#4338ca' : 'currentColor'; 
   const props = {
     width: '18', height: '18',
     viewBox: '0 0 24 24',
     fill: 'none',
     stroke: color,
-    strokeWidth: '1.9',
+    strokeWidth: '2.2',
     strokeLinecap: 'round',
     strokeLinejoin: 'round',
   };

@@ -15,11 +15,18 @@ export default function PracticeTestPlayer() {
     const [timeLeft, setTimeLeft] = useState(1184); // Default to 19:44
     const [isFinished, setIsFinished] = useState(false);
     const [testResult, setTestResult] = useState(null);
+    const [randomizedTest, setRandomizedTest] = useState(null);
 
-    // Initialize time based on test data if available (though data has strings like '20 min')
+    // Initialize randomized questions and time
     useEffect(() => {
         if (test) {
             setTimeLeft(20 * 60); // Standard 20 mins for practice
+            if (test.questions) {
+                // Shuffle all questions and pick the first 5 (or less if fewer exist)
+                const shuffled = [...test.questions].sort(() => 0.5 - Math.random());
+                const selectedQuestions = shuffled.slice(0, 5);
+                setRandomizedTest({ ...test, questions: selectedQuestions });
+            }
         }
     }, [test]);
 
@@ -41,7 +48,7 @@ export default function PracticeTestPlayer() {
     };
 
     const handleFinishTest = () => {
-        const questions = test.questions || [];
+        const questions = randomizedTest?.questions || [];
         let correctCount = 0;
         questions.forEach((q, idx) => {
             if (selectedAnswers[idx] === q.correct) correctCount++;
@@ -53,8 +60,9 @@ export default function PracticeTestPlayer() {
             correct: correctCount,
             total: questions.length,
             passed: score >= 70, // Practice tests might have a lower threshold than Mastery
-            testName: test.title,
-            originalTest: test
+            testName: randomizedTest.title,
+            originalTest: test, // Keep the original test layout/metadata
+            isPractice: true // Flag clearly indicating practice
         });
         setIsFinished(true);
     };
@@ -65,6 +73,13 @@ export default function PracticeTestPlayer() {
         setTimeLeft(20 * 60);
         setIsFinished(false);
         setTestResult(null);
+        
+        // Re-randomize questions on retry so they get different ones
+        if (test && test.questions) {
+            const shuffled = [...test.questions].sort(() => 0.5 - Math.random());
+            const selectedQuestions = shuffled.slice(0, 5);
+            setRandomizedTest({ ...test, questions: selectedQuestions });
+        }
     };
 
     if (!test) {
@@ -97,9 +112,12 @@ export default function PracticeTestPlayer() {
         );
     }
 
+    // Safety check in case randomizedTest is not yet built
+    if (!randomizedTest) return null;
+
     return (
         <TestView
-            activeTest={test}
+            activeTest={randomizedTest}
             currentQuestionIdx={currentQuestionIdx}
             setCurrentQuestionIdx={setCurrentQuestionIdx}
             selectedAnswers={selectedAnswers}

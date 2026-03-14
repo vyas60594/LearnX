@@ -34,7 +34,7 @@ export default function PracticeTests() {
                 />
             )}
 
-            <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto lg:pl-64">
+            <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto lg:pl-72">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
                 <main className="flex-1 bg-white px-4 py-8 sm:px-6 lg:px-10">
@@ -71,58 +71,81 @@ export default function PracticeTests() {
                         </div>
                     </div>
 
-                    {/* Search and Filters */}
-                    <div className="mb-10 p-2 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col md:flex-row items-center gap-4">
-                        <div className="relative flex-1 w-full">
-                            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {/* Search and Filters - Premium Redesign */}
+                    <div className="mb-10 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[24px] p-4 flex flex-col xl:flex-row items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+                        {/* 1. Search Bar */}
+                        <div className="relative flex-1 w-full group">
+                            <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none transition-transform group-focus-within:scale-110 group-focus-within:text-indigo-600">
+                                <svg className="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search practice tests..."
+                                placeholder="Search practice tests by name or topic..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-11 pr-4 py-3 bg-white border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 placeholder:text-slate-400 font-medium"
+                                className="w-full pl-14 pr-6 py-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-100 focus:border-indigo-500/30 rounded-2xl text-sm focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-400 font-semibold text-slate-700 transition-all outline-none"
                             />
                         </div>
 
-                        <div className="flex items-center gap-2 p-1 bg-white rounded-xl border border-slate-100">
-                            <div className="px-3 border-r border-slate-100">
-                                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                </svg>
+                        {/* Contains Selectors */}
+                        <div className="flex flex-col sm:flex-row w-full xl:w-auto items-center gap-4">
+                            
+                            {/* 2. Category Filter (Pill Selector) */}
+                            <div className="flex items-center p-1.5 bg-slate-50/80 border border-slate-100 rounded-2xl w-full sm:w-auto overflow-x-auto no-scrollbar shadow-inner">
+                                <div className="pl-3 pr-2 border-r border-slate-200/60 hidden sm:block text-slate-400">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    </svg>
+                                </div>
+                                <div className="flex gap-1 ml-1 sm:ml-2">
+                                    {PRACTICE_TESTS_CATEGORIES.map(category => (
+                                        <button
+                                            key={category}
+                                            onClick={() => setSelectedCategory(category)}
+                                            className={`relative px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap overflow-hidden ${selectedCategory === category
+                                                ? 'text-white shadow-md shadow-indigo-500/30 translate-y-[-1px]'
+                                                : 'text-slate-500 hover:text-slate-800 hover:bg-white/60'
+                                                }`}
+                                        >
+                                            {selectedCategory === category && (
+                                                <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl -z-10" />
+                                            )}
+                                            {category}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex gap-1">
-                                {PRACTICE_TESTS_CATEGORIES.map(category => (
-                                    <button
-                                        key={category}
-                                        onClick={() => setSelectedCategory(category)}
-                                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedCategory === category
-                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                                            : 'text-slate-600 hover:bg-slate-100'
-                                            }`}
-                                    >
-                                        {category}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
 
-                        <div className="flex gap-1 p-1 bg-white rounded-xl border border-slate-100">
-                            {PRACTICE_TESTS_LEVELS.map(level => (
-                                <button
-                                    key={level}
-                                    onClick={() => setSelectedLevel(level)}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedLevel === level
-                                        ? 'bg-teal-600 text-white shadow-md shadow-teal-200'
-                                        : 'text-slate-600 hover:bg-slate-100'
-                                        }`}
-                                >
-                                    {level}
-                                </button>
-                            ))}
+                            {/* 3. Level Filter */}
+                            <div className="flex gap-1 p-1.5 bg-slate-50/80 border border-slate-100 rounded-2xl w-full sm:w-auto overflow-x-auto no-scrollbar shadow-inner">
+                                {PRACTICE_TESTS_LEVELS.map(level => {
+                                    const isActive = selectedLevel === level;
+                                    let activeBg = 'bg-teal-500';
+                                    let activeShadow = 'shadow-teal-500/30';
+                                    
+                                    if(level === 'Intermediate') {activeBg = 'bg-amber-500'; activeShadow = 'shadow-amber-500/30';}
+                                    if(level === 'Advanced') {activeBg = 'bg-rose-500'; activeShadow = 'shadow-rose-500/30';}
+                                    if(level === 'All') {activeBg = 'bg-slate-700'; activeShadow = 'shadow-slate-700/30';}
+
+                                    return (
+                                        <button
+                                            key={level}
+                                            onClick={() => setSelectedLevel(level)}
+                                            className={`relative px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap overflow-hidden ${isActive
+                                                ? `text-white shadow-md ${activeShadow} translate-y-[-1px]`
+                                                : 'text-slate-500 hover:text-slate-800 hover:bg-white/60'
+                                                }`}
+                                        >
+                                            {isActive && (
+                                                <span className={`absolute inset-0 ${activeBg} rounded-xl -z-10 bg-opacity-90`} />
+                                            )}
+                                            {level}
+                                        </button>
+                                    )
+                                })}
+                            </div>
                         </div>
                     </div>
 

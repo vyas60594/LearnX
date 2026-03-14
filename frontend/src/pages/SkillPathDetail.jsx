@@ -183,7 +183,7 @@ export default function SkillPathDetail() {
         <div className="flex h-screen overflow-hidden bg-white">
             <SideBar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} activePage="skill-paths" />
 
-            <div className="flex flex-1 flex-col overflow-y-auto lg:pl-64">
+            <div className="flex flex-1 flex-col overflow-y-auto lg:pl-72">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
                 <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">

@@ -12,7 +12,7 @@ export default function PracticeTestPlayer() {
     // Test State
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState({});
-    const [timeLeft, setTimeLeft] = useState(1184); // Default to 19:44
+    const [timeLeft, setTimeLeft] = useState(0); // Actual value is set in useEffect when test loads
     const [isFinished, setIsFinished] = useState(false);
     const [testResult, setTestResult] = useState(null);
     const [randomizedTest, setRandomizedTest] = useState(null);
@@ -33,13 +33,13 @@ export default function PracticeTestPlayer() {
     // Timer effect
     useEffect(() => {
         let timer;
-        if (!isFinished && timeLeft > 0) {
+        if (!isFinished && timeLeft > 0 && randomizedTest) {
             timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-        } else if (timeLeft === 0 && !isFinished) {
+        } else if (timeLeft === 0 && !isFinished && randomizedTest) {
             handleFinishTest();
         }
         return () => clearInterval(timer);
-    }, [isFinished, timeLeft]);
+    }, [isFinished, timeLeft, randomizedTest]);
 
     const formatTime = (seconds) => {
         const m = Math.floor(seconds / 60);

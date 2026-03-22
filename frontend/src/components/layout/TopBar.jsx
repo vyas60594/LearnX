@@ -62,12 +62,14 @@ const TopBar = ({ onMenuClick }) => {
           <div className="flex items-center gap-3 px-2 py-1.5 rounded-2xl hover:bg-slate-50 transition-colors">
             {/* Initials avatar circle */}
             <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-indigo-500 to-indigo-700 text-sm font-bold text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
-              RV
+              {/* TODO: Replace with auth context user initials */}
+              AK
             </div>
             {/* Name & Role — hidden on small screens */}
             <div className="hidden sm:flex flex-col">
               <span className="text-[13px] font-extrabold text-slate-800 leading-tight">
-                Rahul Vyas
+                {/* TODO: Replace with auth context user name */}
+                Arjun Kumar
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Student

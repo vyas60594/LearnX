@@ -26,7 +26,7 @@ export default function SkillPathDetail() {
     const [testResult, setTestResult] = useState(null);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState({});
-    const [timeLeft, setTimeLeft] = useState(1184);
+    const [timeLeft, setTimeLeft] = useState(0); // Actual value set by handleTakeTest
 
     // Track which level the active mastery test belongs to
     const activeLevelIdxRef = useRef(null);
@@ -75,7 +75,7 @@ export default function SkillPathDetail() {
         setActiveTest(test);
         setCurrentQuestionIdx(0);
         setSelectedAnswers({});
-        setTimeLeft(1184);
+        setTimeLeft(1184); // 19m 44s per mastery test
         setTestResult(null);
     };
 

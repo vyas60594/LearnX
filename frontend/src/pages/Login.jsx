@@ -19,7 +19,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     // TODO: call auth API, then redirect on success
-    navigate('/Dashboard');
+    navigate('/dashboard');
   };
 
   const loginIllustration = (

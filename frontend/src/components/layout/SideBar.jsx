@@ -5,7 +5,7 @@
 //  On mobile:  slides in/out via the isOpen prop.
 // =============================================================
 
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 // =============================================================
 //  NAV ITEMS
@@ -36,6 +36,7 @@ const BOTTOM_NAV = [
 // =============================================================
 
 const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
+  const navigate = useNavigate();
   return (
     <aside
       className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-slate-100 bg-white transition-transform duration-300
@@ -82,7 +83,26 @@ const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
         <ul className="space-y-1">
           {BOTTOM_NAV.map((item) => (
             <li key={item.key}>
-              <NavItem item={item} isActive={activePage === item.key} />
+              {item.key === 'logout' ? (
+                <button
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to logout?')) {
+                      navigate('/');
+                    }
+                  }}
+                  className="group relative flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition-all duration-300 ease-out text-slate-500 hover:text-slate-800 hover:bg-slate-50 hover:translate-x-1"
+                >
+                  <div className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:text-indigo-500">
+                    <NavIcon name={item.icon} isActive={false} />
+                  </div>
+                  <span className="tracking-tight">{item.label}</span>
+                  <svg className="ml-auto w-4 h-4 text-slate-300 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <NavItem item={item} isActive={activePage === item.key} />
+              )}
             </li>
           ))}
         </ul>

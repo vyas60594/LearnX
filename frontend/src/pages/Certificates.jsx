@@ -53,7 +53,7 @@ export default function Certificates() {
                 />
             )}
 
-            <div className="flex flex-1 flex-col overflow-y-auto w-full lg:pl-72">
+            <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto w-full lg:pl-72">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
                 <main className="flex-1 px-4 py-8 sm:px-6 lg:px-10 max-w-7xl mx-auto w-full">

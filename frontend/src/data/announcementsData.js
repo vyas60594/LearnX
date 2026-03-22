@@ -1,3 +1,5 @@
+// To add a new announcement, simply append a new object to the ANNOUNCEMENTS_DATA array.
+// Ensure the ID is unique and the icon is one of the supported types.
 // =============================================================
 //  announcementsData.js
 //  Static announcement entries for the Announcements page.

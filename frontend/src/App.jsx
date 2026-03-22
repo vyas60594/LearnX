@@ -1,12 +1,14 @@
 import { Route, Routes } from 'react-router';
-import CheckEmail from './pages/CheckEmail';
+import Announcements from './pages/Announcements';
 import Certificates from './pages/Certificates';
+import CheckEmail from './pages/CheckEmail';
 import Dashboard from './pages/Dashboard';
 import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import PracticeTestPlayer from './pages/PracticeTestPlayer';
 import PracticeTests from './pages/PracticeTests';
+import Profile from './pages/Profile';
 import Register from './pages/Register';
 import SkillPathDetail from './pages/SkillPathDetail';
 import SkillPaths from './pages/SkillPaths';
@@ -26,6 +28,8 @@ function App() {
             <Route path="/certificates" element={<Certificates />} />
             <Route path="/practice-tests" element={<PracticeTests />} />
             <Route path="/practice-test/:id" element={<PracticeTestPlayer />} />
+            <Route path="/announcements" element={<Announcements />} />
+            <Route path="/profile" element={<Profile />} />
         </Routes>
     );
 }

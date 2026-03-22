@@ -28,7 +28,7 @@ const MAIN_NAV = [
 
 const BOTTOM_NAV = [
   // { key: 'settings', label: 'Settings', to: '/settings', icon: 'settings' },
-  { key: 'logout', label: 'Logout', to: '/logout', icon: 'logout' },
+  { key: 'logout', label: 'Logout', to: '/', icon: 'logout' },
 ];
 
 // =============================================================
@@ -99,10 +99,10 @@ const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
 
 function NavItem({ item, isActive }) {
   const base = 'group relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition-all duration-300 ease-out';
-  
+
   // Interactive hover states with transform translations
   const idle = 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 hover:translate-x-1';
-  
+
   // Active state styling: distinct color, subtle gradient background, left accent block
   const active = 'text-indigo-700 bg-gradient-to-r from-indigo-50 to-white hover:translate-x-1';
 
@@ -112,19 +112,19 @@ function NavItem({ item, isActive }) {
       {isActive && (
         <span className="absolute left-0 top-1/2 h-1/2 w-1 -translate-y-1/2 rounded-r-lg bg-indigo-600 shadow-[0_0_10px_rgba(79,70,229,0.4)]" />
       )}
-      
+
       {/* Icon Wrapper allows icon to scale independently on hover */}
       <div className={`transition-transform duration-300 ease-out ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-indigo-500'}`}>
         <NavIcon name={item.icon} isActive={isActive} />
       </div>
-      
+
       <span className="tracking-tight">{item.label}</span>
-      
+
       {/* Subtle interaction affordance arrow completely hidden unless hovered */}
       {!isActive && (
-         <svg className="ml-auto w-4 h-4 text-slate-300 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-         </svg>
+        <svg className="ml-auto w-4 h-4 text-slate-300 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       )}
     </Link>
   );
@@ -139,7 +139,7 @@ function NavItem({ item, isActive }) {
 function NavIcon({ name, isActive }) {
   // Rather than hardcoded `#4f46e5`, setting colors via class inheritance fits the group-hover setup better,
   // but since SVG stroke is explicitly defined, we will adjust this logic.
-  const color = isActive ? '#4338ca' : 'currentColor'; 
+  const color = isActive ? '#4338ca' : 'currentColor';
   const props = {
     width: '18', height: '18',
     viewBox: '0 0 24 24',

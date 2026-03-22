@@ -57,7 +57,7 @@ export default function Certificates() {
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
                 <main className="flex-1 px-4 py-8 sm:px-6 lg:px-10 max-w-7xl mx-auto w-full">
-                    
+
                     {/* Header */}
                     <div className="mb-10">
                         <div className="flex items-center gap-3 mb-2">
@@ -103,9 +103,9 @@ export default function Certificates() {
                                         <span className="text-base font-black text-slate-800">{path.progress}%</span>
                                     </div>
                                     <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-4">
-                                        <div 
-                                            className="h-full bg-indigo-600 rounded-full transition-all duration-1000 ease-out" 
-                                            style={{ width: `${path.progress}%` }} 
+                                        <div
+                                            className="h-full bg-indigo-600 rounded-full transition-all duration-1000 ease-out"
+                                            style={{ width: `${path.progress}%` }}
                                         />
                                     </div>
                                 </div>
@@ -123,15 +123,15 @@ export default function Certificates() {
                     {/* Certificate Preview Placeholder */}
                     <div className="bg-white rounded-[32px] border border-slate-200/60 shadow-sm p-8 xl:p-12">
                         <h2 className="text-xl font-bold text-slate-900 tracking-tight mb-8">Certificate Preview</h2>
-                        
+
                         <div className="w-full bg-slate-100/80 rounded-2xl p-8 sm:p-16 flex items-center justify-center relative overflow-hidden group">
-                            
+
                             {/* Decorative background blur for depth */}
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-white/40 blur-3xl rounded-full pointer-events-none" />
 
                             {/* The Mock Certificate Card */}
                             <div className="relative w-full max-w-2xl aspect-[1.414/1] bg-[#f8f9fa] shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-sm border-[12px] border-[#e2e8f0] p-10 flex flex-col items-center justify-center text-center transform hover:scale-[1.02] transition-transform duration-500 will-change-transform z-10">
-                                
+
                                 {/* Inner decorative border */}
                                 <div className="absolute inset-4 border-2 border-indigo-900/10 pointer-events-none" />
                                 <div className="absolute inset-5 border border-indigo-900/5 pointer-events-none" />
@@ -147,19 +147,19 @@ export default function Certificates() {
                                 <h1 className="text-sm font-bold text-indigo-900/50 uppercase tracking-[0.3em] mb-4">
                                     Certificate of Completion
                                 </h1>
-                                
+
                                 <p className="text-xs text-slate-500 font-medium tracking-wide mb-2 uppercase">
                                     This certifies that
                                 </p>
-                                
+
                                 <h2 className="text-4xl text-slate-800 font-serif italic font-medium mb-6">
                                     Alexander Chen
                                 </h2>
-                                
+
                                 <p className="text-xs text-slate-500 font-medium tracking-wide mb-2 uppercase">
                                     has successfully completed the
                                 </p>
-                                
+
                                 <h3 className="text-lg font-bold text-indigo-900 tracking-tight mb-12">
                                     Advanced Data Science Program
                                 </h3>

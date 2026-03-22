@@ -60,23 +60,23 @@ const TopBar = ({ onMenuClick }) => {
         {/* User avatar + name */}
         <div className="flex cursor-pointer items-center gap-3 ml-2 pl-2 border-l border-slate-200">
           <div className="flex items-center gap-3 px-2 py-1.5 rounded-2xl hover:bg-slate-50 transition-colors">
-              {/* Initials avatar circle */}
-              <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-indigo-500 to-indigo-700 text-sm font-bold text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
-                RV
-              </div>
-              {/* Name & Role — hidden on small screens */}
-              <div className="hidden sm:flex flex-col">
-                <span className="text-[13px] font-extrabold text-slate-800 leading-tight">
-                  Rahul Vyas
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Student
-                </span>
-              </div>
-              
-              <svg className="hidden sm:block w-3 h-3 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
+            {/* Initials avatar circle */}
+            <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-indigo-500 to-indigo-700 text-sm font-bold text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
+              RV
+            </div>
+            {/* Name & Role — hidden on small screens */}
+            <div className="hidden sm:flex flex-col">
+              <span className="text-[13px] font-extrabold text-slate-800 leading-tight">
+                Rahul Vyas
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                Student
+              </span>
+            </div>
+
+            <svg className="hidden sm:block w-3 h-3 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
         </div>
 

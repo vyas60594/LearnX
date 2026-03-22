@@ -91,7 +91,7 @@ export default function PracticeTests() {
 
                         {/* Contains Selectors */}
                         <div className="flex flex-col sm:flex-row w-full xl:w-auto items-center gap-4">
-                            
+
                             {/* 2. Category Filter (Pill Selector) */}
                             <div className="flex items-center p-1.5 bg-slate-50/80 border border-slate-100 rounded-2xl w-full sm:w-auto overflow-x-auto no-scrollbar shadow-inner">
                                 <div className="pl-3 pr-2 border-r border-slate-200/60 hidden sm:block text-slate-400">
@@ -124,10 +124,10 @@ export default function PracticeTests() {
                                     const isActive = selectedLevel === level;
                                     let activeBg = 'bg-teal-500';
                                     let activeShadow = 'shadow-teal-500/30';
-                                    
-                                    if(level === 'Intermediate') {activeBg = 'bg-amber-500'; activeShadow = 'shadow-amber-500/30';}
-                                    if(level === 'Advanced') {activeBg = 'bg-rose-500'; activeShadow = 'shadow-rose-500/30';}
-                                    if(level === 'All') {activeBg = 'bg-slate-700'; activeShadow = 'shadow-slate-700/30';}
+
+                                    if (level === 'Intermediate') { activeBg = 'bg-amber-500'; activeShadow = 'shadow-amber-500/30'; }
+                                    if (level === 'Advanced') { activeBg = 'bg-rose-500'; activeShadow = 'shadow-rose-500/30'; }
+                                    if (level === 'All') { activeBg = 'bg-slate-700'; activeShadow = 'shadow-slate-700/30'; }
 
                                     return (
                                         <button

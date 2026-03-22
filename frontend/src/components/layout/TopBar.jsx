@@ -4,22 +4,28 @@
 //  Contains: mobile menu toggle, search bar, action icons, user info.
 // =============================================================
 
+import { useAuth } from '../../context/AuthContext';
+
 const TopBar = ({ onMenuClick }) => {
+  const { user } = useAuth();
+
   return (
-    <header className="sticky top-0 px-6 py-3 z-20 flex h-20 border-b w-full items-center justify-between border-slate-200/60 bg-white/80 backdrop-blur-md shadow-sm transition-all">
+    <header className="sticky top-0 px-4 sm:px-6 py-3 z-20 flex h-20 border-b w-full items-center justify-between border-slate-200/60 bg-white/80 backdrop-blur-md shadow-sm transition-all">
 
-      {/* ── Hamburger — only shown on mobile ── */}
-      <button
-        onClick={onMenuClick}
-        className="mr-4 rounded-xl p-2 text-slate-500 transition-all hover:bg-slate-50 active:scale-95 lg:hidden"
-      >
-        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-        </svg>
-      </button>
+      {/* ── Left Side: Hamburger (mobile) or Logo (desktop) ── */}
+      <div className="flex items-center">
+        <button
+          onClick={onMenuClick}
+          className="mr-3 rounded-xl p-2 text-slate-500 transition-all hover:bg-slate-50 active:scale-95 lg:hidden"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </div>
 
-      {/* ── Search bar ── */}
-      <div className="relative max-w-md flex-1 group">
+      {/* ── Search bar — hidden on mobile/tablet, shown on lg+ ── */}
+      <div className="relative max-w-md flex-1 group hidden lg:block">
         {/* Search icon inside the input */}
         <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -36,7 +42,15 @@ const TopBar = ({ onMenuClick }) => {
       </div>
 
       {/* ── Right-side actions ── */}
-      <div className="ml-4 flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
+        
+        {/* Search icon for mobile (hidden on lg+) */}
+        <button className="flex lg:hidden h-10 w-10 items-center justify-center rounded-full border border-slate-200/60 bg-white text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-4.35-4.35" strokeLinecap="round" />
+          </svg>
+        </button>
 
         {/* Dark mode toggle button */}
         <button className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/60 bg-white text-slate-500 hover:bg-slate-50 hover:text-indigo-600 hover:scale-105 active:scale-95 transition-all shadow-sm">
@@ -58,25 +72,23 @@ const TopBar = ({ onMenuClick }) => {
         </button>
 
         {/* User avatar + name */}
-        <div className="flex cursor-pointer items-center gap-3 ml-2 pl-2 border-l border-slate-200">
-          <div className="flex items-center gap-3 px-2 py-1.5 rounded-2xl hover:bg-slate-50 transition-colors">
+        <div className="flex cursor-pointer items-center ml-1 sm:ml-2 pl-2 sm:border-l sm:border-slate-200">
+          <div className="flex items-center gap-3 px-1 sm:px-2 py-1.5 rounded-2xl hover:bg-slate-50 transition-colors">
             {/* Initials avatar circle */}
-            <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-indigo-500 to-indigo-700 text-sm font-bold text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
-              {/* TODO: Replace with auth context user initials */}
-              AK
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-[12px] sm:rounded-[14px] bg-gradient-to-br from-indigo-500 to-indigo-700 text-xs sm:text-sm font-bold text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
+              {user?.initials || 'U'}
             </div>
             {/* Name & Role — hidden on small screens */}
-            <div className="hidden sm:flex flex-col">
+            <div className="hidden md:flex flex-col">
               <span className="text-[13px] font-extrabold text-slate-800 leading-tight">
-                {/* TODO: Replace with auth context user name */}
-                Arjun Kumar
+                {user?.name || 'User'}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Student
+                {user?.role || 'Student'}
               </span>
             </div>
 
-            <svg className="hidden sm:block w-3 h-3 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+            <svg className="hidden md:block w-3 h-3 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </div>

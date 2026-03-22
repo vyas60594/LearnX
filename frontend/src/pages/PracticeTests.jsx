@@ -34,10 +34,10 @@ export default function PracticeTests() {
                 />
             )}
 
-            <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto lg:pl-72">
+            <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto lg:pl-72 relative">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
-                <main className="flex-1 bg-white px-4 py-8 sm:px-6 lg:px-10">
+                <main className="flex-1 bg-white px-4 pt-6 pb-20 sm:px-6 lg:px-10 lg:pt-8 w-full max-w-7xl mx-auto">
                     {/* Header Section */}
                     <div className="mb-8">
                         <div className="flex items-center gap-3 mb-2">
@@ -72,7 +72,7 @@ export default function PracticeTests() {
                     </div>
 
                     {/* Search and Filters - Premium Redesign */}
-                    <div className="mb-10 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[24px] p-4 flex flex-col xl:flex-row items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+                    <div className="mb-10 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[24px] p-4 lg:p-5 flex flex-col lg:flex-row items-center gap-5 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
                         {/* 1. Search Bar */}
                         <div className="relative flex-1 w-full group">
                             <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none transition-transform group-focus-within:scale-110 group-focus-within:text-indigo-600">
@@ -82,7 +82,7 @@ export default function PracticeTests() {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search practice tests by name or topic..."
+                                placeholder="Search practice tests..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-14 pr-6 py-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-100 focus:border-indigo-500/30 rounded-2xl text-sm focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-400 font-semibold text-slate-700 transition-all outline-none"
@@ -90,11 +90,11 @@ export default function PracticeTests() {
                         </div>
 
                         {/* Contains Selectors */}
-                        <div className="flex flex-col sm:flex-row w-full xl:w-auto items-center gap-4">
+                        <div className="flex flex-col md:flex-row w-full lg:w-auto items-center gap-4">
 
                             {/* 2. Category Filter (Pill Selector) */}
                             <div className="flex items-center p-1.5 bg-slate-50/80 border border-slate-100 rounded-2xl w-full sm:w-auto overflow-x-auto no-scrollbar shadow-inner">
-                                <div className="pl-3 pr-2 border-r border-slate-200/60 hidden sm:block text-slate-400">
+                                <div className="pl-3 pr-2 border-r border-slate-200/60 hidden md:block text-slate-400">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                     </svg>
@@ -104,7 +104,7 @@ export default function PracticeTests() {
                                         <button
                                             key={category}
                                             onClick={() => setSelectedCategory(category)}
-                                            className={`relative px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap overflow-hidden ${selectedCategory === category
+                                            className={`relative px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all duration-300 whitespace-nowrap overflow-hidden ${selectedCategory === category
                                                 ? 'text-white shadow-md shadow-indigo-500/30 translate-y-[-1px]'
                                                 : 'text-slate-500 hover:text-slate-800 hover:bg-white/60'
                                                 }`}
@@ -133,7 +133,7 @@ export default function PracticeTests() {
                                         <button
                                             key={level}
                                             onClick={() => setSelectedLevel(level)}
-                                            className={`relative px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap overflow-hidden ${isActive
+                                            className={`relative px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all duration-300 whitespace-nowrap overflow-hidden ${isActive
                                                 ? `text-white shadow-md ${activeShadow} translate-y-[-1px]`
                                                 : 'text-slate-500 hover:text-slate-800 hover:bg-white/60'
                                                 }`}

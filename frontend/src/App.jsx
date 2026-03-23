@@ -1,5 +1,5 @@
 import { Link, Route, Routes, Navigate } from 'react-router';
-import logo from './assets/learnx.png';
+import logo from './assets/learnx_logo.png';
 import Announcements from './pages/Announcements';
 import Certificates from './pages/Certificates';
 import CheckEmail from './pages/CheckEmail';

@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import logo from '../../assets/learnx_logo.svg';
+import logo from '../../assets/learnx_logo.png';
 
 const Logo = ({ 
     className = '', 

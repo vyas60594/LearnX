@@ -1,4 +1,4 @@
-import logo from '../../assets/learnx_logo.svg';
+import logo from '../../assets/learnx_logo.png';
 
 const AuthLayout = ({ children, illustration, title, subtitle }) => {
     return (

@@ -6,20 +6,31 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useAuth } from '../context/AuthContext';
 import image2 from '../assets/image2.png';
 import AuthLayout from '../components/layout/AuthLayout';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // TODO: call auth API, then redirect on success
-    navigate('/dashboard');
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loginIllustration = (
@@ -94,10 +105,11 @@ const Login = () => {
 
           <button
             type="submit"
-            className="group relative h-14 w-full overflow-hidden rounded-2xl bg-[#6366f1] text-base font-bold text-white shadow-xl shadow-[#6366f1]/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+            disabled={loading}
+            className="group relative h-14 w-full overflow-hidden rounded-2xl bg-[#6366f1] text-base font-bold text-white shadow-xl shadow-[#6366f1]/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
           >
             <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            Sign In
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
 
         </form>

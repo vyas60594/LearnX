@@ -14,7 +14,7 @@ import Register from './pages/Register';
 import SkillPathDetail from './pages/SkillPathDetail';
 import SkillPaths from './pages/SkillPaths';
 import ProtectedRoute from './components/layout/ProtectedRoute';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 
 // Admin Imports

@@ -6,6 +6,7 @@
 // =============================================================
 
 import { Link, useNavigate } from 'react-router';
+import { useAuth } from '../../context/AuthContext';
 
 // =============================================================
 //  NAV ITEMS
@@ -17,7 +18,7 @@ import { Link, useNavigate } from 'react-router';
 // =============================================================
 
 const MAIN_NAV = [
-  { key: 'dashboard', label: 'Dashboard', to: '/Dashboard', icon: 'dashboard' },
+  { key: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: 'dashboard' },
   { key: 'skill-paths', label: 'Skill Paths', to: '/skill-paths', icon: 'skill-paths' },
   { key: 'practice-tests', label: 'Practice Tests', to: '/practice-tests', icon: 'practice-tests' },
   // { key: 'progress', label: 'Progress', to: '/progress-reports', icon: 'progress' },
@@ -36,6 +37,7 @@ const BOTTOM_NAV = [
 // =============================================================
 
 const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
   return (
     <aside
@@ -87,6 +89,7 @@ const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
                 <button
                   onClick={() => {
                     if (window.confirm('Are you sure you want to logout?')) {
+                      logout();
                       navigate('/');
                     }
                   }}

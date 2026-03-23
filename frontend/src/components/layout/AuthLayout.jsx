@@ -1,4 +1,4 @@
-import logo from '../../assets/learnx_logo.png';
+import Logo from '../ui/Logo';
 
 const AuthLayout = ({ children, illustration, title, subtitle }) => {
     return (
@@ -7,11 +7,8 @@ const AuthLayout = ({ children, illustration, title, subtitle }) => {
             <div className="hidden w-1/2 flex-col items-center justify-center bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#a855f7] p-12 lg:flex">
                 <div className="flex w-full max-w-md flex-col items-center">
                     {/* Logo Header */}
-                    <div className="mb-12 flex w-full items-center justify-start gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-md">
-                            <img src={logo} alt="LearnX Logo" />
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight text-white">LearnX</span>
+                    <div className="mb-12 flex w-full items-center justify-start">
+                        <Logo size="xl" isDark disableLink />
                     </div>
 
                     {/* Illustration Area */}
@@ -39,9 +36,8 @@ const AuthLayout = ({ children, illustration, title, subtitle }) => {
             <div className="flex w-full items-center justify-center p-6 lg:w-1/2 lg:p-12">
                 <div className="w-full max-w-md">
                     {/* Mobile Logo (Visible only on small screens) */}
-                    <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
-                        <img src={logo} alt="LearnX Logo" className="h-10 w-10 object-contain" />
-                        <span className="text-2xl font-bold text-slate-900">LearnX</span>
+                    <div className="mb-8 flex items-center justify-center lg:hidden">
+                        <Logo size="lg" disableLink />
                     </div>
 
                     <div className="auth-card animate-in fade-in slide-in-from-bottom-4 duration-700">

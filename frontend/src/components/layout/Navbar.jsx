@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router';
+import Logo from '../ui/Logo';
 
 const NAV_LINKS = [
     { label: 'How It Works', href: '#how-it-works' },
@@ -22,14 +23,7 @@ const Navbar = () => {
                 <div className="flex h-16 items-center justify-between">
 
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                            <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                            </svg>
-                        </div>
-                        <span className="text-xl font-extrabold text-slate-900">LearnX</span>
-                    </Link>
+                    <Logo size="md" />
 
                     {/* Desktop nav links */}
                     <div className="hidden items-center gap-8 md:flex">

@@ -7,6 +7,7 @@
 
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
+import Logo from '../ui/Logo';
 
 // =============================================================
 //  NAV ITEMS
@@ -47,12 +48,8 @@ const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
 
       {/* ── Logo header ── */}
       <div className="flex items-center justify-between px-6 py-6 mb-2">
-        <div className="flex items-center gap-3">
-          {/* Constrained, standardized "LX" logo mark */}
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-[13px] font-black italic tracking-tighter text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
-            LX
-          </div>
-          <span className="text-xl font-extrabold text-slate-800 tracking-tight">LearnX</span>
+        <div className="-ml-1 flex items-center">
+          <Logo size="md" to="/dashboard" />
         </div>
 
         {/* Close X (mobile only) */}

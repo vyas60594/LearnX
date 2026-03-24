@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router';
-import { useAdminAuth } from '../../../context/AdminAuthContext';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { useAuth } from '../../../context/AuthContext';
 import Logo from '../../ui/Logo';
 
 const NAV_ITEMS = [
@@ -13,7 +13,8 @@ const NAV_ITEMS = [
 
 const AdminSideBar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
-    const { logoutAdmin } = useAdminAuth();
+    const navigate = useNavigate();
+    const { logout } = useAuth();
 
     return (
         <aside className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-slate-200/50 bg-slate-900 transition-transform duration-300 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -57,7 +58,7 @@ const AdminSideBar = ({ isOpen, setIsOpen }) => {
             {/* Logout */}
             <div className="p-4 border-t border-white/10">
                 <button
-                    onClick={logoutAdmin}
+                    onClick={() => { logout(); window.location.href = '/admin/login'; }}
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold text-rose-400 hover:bg-rose-500/10 transition-colors"
                 >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>

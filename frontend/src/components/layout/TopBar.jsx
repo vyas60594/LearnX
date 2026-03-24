@@ -84,13 +84,10 @@ const TopBar = ({ onMenuClick }) => {
                 {user?.name || 'User'}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                {user?.role || 'Student'}
+                {user?.role || ''}
               </span>
             </div>
 
-            <svg className="hidden md:block w-3 h-3 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
           </div>
         </div>
 

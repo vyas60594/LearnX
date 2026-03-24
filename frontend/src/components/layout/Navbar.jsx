@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { useAuth } from '../../context/AuthContext';
 import Logo from '../ui/Logo';
 
 const NAV_LINKS = [
@@ -15,6 +16,7 @@ const NAV_LINKS = [
 ];
 
 const Navbar = () => {
+    const { user, logout } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
@@ -36,12 +38,37 @@ const Navbar = () => {
 
                     {/* Desktop CTA buttons */}
                     <div className="hidden items-center gap-3 md:flex">
-                        <Link to="/login" className="px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-primary">
-                            Login
-                        </Link>
-                        <Link to="/register" className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-violet-700 hover:shadow-lg active:scale-95">
-                            Start Learning →
-                        </Link>
+                        {user ? (
+                            <div className="flex items-center gap-4">
+                                <span className="text-sm font-bold text-slate-400 hidden md:inline">
+                                    Signed in as <span className="text-slate-900">{user.name}</span>
+                                </span>
+                                <Link 
+                                    to={user.role === 'admin' ? "/admin/dashboard" : "/dashboard"} 
+                                    className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-violet-700 hover:shadow-lg active:scale-95"
+                                >
+                                    Go to Dashboard
+                                </Link>
+                                <button
+                                    onClick={() => {
+                                        logout();
+                                        window.location.href = '/';
+                                    }}
+                                    className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-rose-500 transition-colors"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <Link to="/login" className="px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-primary">
+                                    Login
+                                </Link>
+                                <Link to="/register" className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-violet-700 hover:shadow-lg active:scale-95">
+                                    Join LearnX →
+                                </Link>
+                            </>
+                        )}
                     </div>
 
                     {/* Mobile hamburger button */}
@@ -60,13 +87,40 @@ const Navbar = () => {
                                 {link.label}
                             </a>
                         ))}
-                        <div className="flex gap-3 px-4 pt-2">
-                            <Link to="/login" className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
-                                Login
-                            </Link>
-                            <Link to="/register" className="flex-1 rounded-lg bg-primary px-4 py-2 text-center text-sm font-semibold text-white transition-all hover:bg-violet-700">
-                                Start Learning
-                            </Link>
+                        <div className="px-4 pt-2">
+                            {user ? (
+                                <div className="space-y-3">
+                                    <p className="px-1 text-xs font-bold text-slate-400">
+                                        Signed In: <span className="text-slate-900">{user.name}</span>
+                                    </p>
+                                    <div className="flex gap-3">
+                                        <Link 
+                                            to={user.role === 'admin' ? "/admin/dashboard" : "/dashboard"} 
+                                            className="flex-1 rounded-lg bg-primary px-4 py-2 text-center text-sm font-semibold text-white transition-all hover:bg-violet-700"
+                                        >
+                                            Go to Dashboard
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                logout();
+                                                window.location.href = '/';
+                                            }}
+                                            className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-rose-500 transition-colors hover:bg-rose-50"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex gap-3">
+                                    <Link to="/login" className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
+                                        Login
+                                    </Link>
+                                    <Link to="/register" className="flex-1 rounded-lg bg-primary px-4 py-2 text-center text-sm font-semibold text-white transition-all hover:bg-violet-700">
+                                        Join for Free
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

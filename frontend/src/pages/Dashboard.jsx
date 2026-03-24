@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 // Layout Components
+import { useAuth } from '../context/AuthContext';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
 
@@ -23,6 +24,7 @@ import {
 } from '../data/dashboardData';
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -39,8 +41,8 @@ export default function Dashboard() {
       <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto lg:pl-72">
         <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
-        <main className="flex-1 bg-white px-4 py-6 sm:px-6 lg:px-8 sm:py-7">
-          <WelcomeHeader name="Arjun" />
+        <main className="flex-1 bg-white px-4 py-4 sm:px-6 lg:px-8 sm:py-6">
+          <WelcomeHeader name={user?.name?.split(' ')[0] || 'Student'} />
 
           {/* Stats Row */}
           <div className="mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

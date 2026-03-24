@@ -9,17 +9,8 @@
 import { useState } from 'react';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
+import { useAuth } from '../context/AuthContext';
 import { SKILL_PATHS } from '../data/dashboardData';
-
-// ── Initial user data ─────────────────────────────────────────
-const INITIAL_USER = {
-  initials: 'AK',
-  name: 'Arjun Kumar',
-  role: 'CE Student · Batch 2026',
-  email: 'arjun.kumar@example.com',
-  department: 'Computer Engineering',
-  joined: 'Joined January 2026',
-};
 
 const STATS = [
   {
@@ -284,8 +275,16 @@ function EditProfileModal({ onClose, user, onSave }) {
 
 // ── Page ──────────────────────────────────────────────────────
 export default function Profile() {
+  const { user: authUser } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [user, setUser] = useState(INITIAL_USER);
+  const [user, setUser] = useState(authUser || {
+      name: 'Guest User',
+      role: 'Guest',
+      email: '',
+      initials: 'G',
+      department: 'N/A',
+      joined: 'N/A'
+  });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleSaveProfile = (updatedUser) => {

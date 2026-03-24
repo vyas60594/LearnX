@@ -85,10 +85,8 @@ const SideBar = ({ isOpen, setIsOpen, activePage = 'dashboard' }) => {
               {item.key === 'logout' ? (
                 <button
                   onClick={() => {
-                    if (window.confirm('Are you sure you want to logout?')) {
-                      logout();
-                      navigate('/');
-                    }
+                    logout();
+                    window.location.href = '/';
                   }}
                   className="group relative flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition-all duration-300 ease-out text-slate-500 hover:text-slate-800 hover:bg-slate-50 hover:translate-x-1"
                 >

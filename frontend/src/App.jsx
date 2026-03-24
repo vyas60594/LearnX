@@ -16,12 +16,11 @@ import SkillPaths from './pages/SkillPaths';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
+import Logo from './components/ui/Logo';
 
-// Admin Imports
-import { AdminAuthProvider } from './context/AdminAuthContext';
-import AdminProtectedRoute from './components/layout/admin/AdminProtectedRoute';
-import AdminLayout from './components/layout/admin/AdminLayout';
+// Admin Page Imports
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminLayout from './components/layout/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminAnnouncements from './pages/admin/AdminAnnouncements';
@@ -32,7 +31,6 @@ import AdminPracticeTestEditor from './pages/admin/AdminPracticeTestEditor';
 
 function App() {
     return (
-        <AdminAuthProvider>
         <AuthProvider>
             <Toaster position="top-right" toastOptions={{
                 duration: 4000,
@@ -46,8 +44,8 @@ function App() {
             <Routes>
                 {/* ── Admin Routes ───────────────────────────── */}
                 <Route path="/admin/login" element={<AdminLogin />} />
-                
-                <Route path="/admin" element={<AdminProtectedRoute />}>
+
+                <Route path="/admin" element={<ProtectedRoute requiredRole="admin" />}>
                     <Route element={<AdminLayout />}>
                         <Route index element={<AdminDashboard />} />
                         <Route path="dashboard" element={<AdminDashboard />} />
@@ -57,19 +55,18 @@ function App() {
                         <Route path="practice-tests" element={<AdminPracticeTests />} />
                         <Route path="practice-tests/:id" element={<AdminPracticeTestEditor />} />
                         <Route path="announcements" element={<AdminAnnouncements />} />
-                        
-                        {/* Catch-all for any unknown /admin/* paths */}
                         <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
                     </Route>
                 </Route>
 
-                {/* ── Student Routes ─────────────────────────── */}
+                {/* ── Public Routes ──────────────────────────── */}
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/check-email" element={<CheckEmail />} />
 
+                {/* ── User Protected Routes ──────────────────── */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/skill-paths" element={<SkillPaths />} />
@@ -84,23 +81,24 @@ function App() {
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </AuthProvider>
-        </AdminAuthProvider>
     );
 }
 
 function NotFound() {
     const { user } = useAuth();
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-slate-50 gap-4">
-            <div className="flex items-center gap-3">
-                <img src={logo} alt="LearnX Logo" className="h-16 w-16 object-contain" />
-                <span className="text-5xl font-black text-slate-900 tracking-tight">LearnX</span>
-            </div>
-            <h1 className="text-6xl font-black text-slate-900 mt-4">404</h1>
-            <p className="text-slate-500 font-medium text-lg">Oops! This page doesn't exist.</p>
+        <div className="flex flex-col items-center justify-center h-screen bg-slate-50 px-4 text-center">
+            <Logo size="lg" />
+            <h1 className="text-7xl font-black text-slate-200 mt-6 relative">
+                404
+                <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-slate-900">Oops!</span>
+            </h1>
+            <p className="text-slate-500 font-bold mt-4 max-w-xs transition-colors hover:text-slate-600">
+                The page you're looking for has moved or doesn't exist.
+            </p>
             <Link
-                to={user ? "/dashboard" : "/"}
-                className="mt-2 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95"
+                to={user ? (user.role === 'admin' ? "/admin/dashboard" : "/dashboard") : "/"}
+                className="mt-8 px-10 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:shadow-indigo-200 transition-all active:scale-95"
             >
                 {user ? "Back to Dashboard" : "Back to Home"}
             </Link>

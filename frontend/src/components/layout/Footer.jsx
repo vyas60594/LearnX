@@ -42,13 +42,13 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Others Column */}
+                    {/* Resources Column */}
                     <div>
-                        <h4 className="text-white font-bold mb-5 text-sm">Others</h4>
+                        <h4 className="text-white font-bold mb-5 text-sm">Resources</h4>
                         <ul className="space-y-3 text-sm">
-                            <li><a href="#" className="hover:text-primary transition-colors">Admin Home</a></li>
                             <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
                             <li><a href="#" className="hover:text-primary transition-colors">Terms of Use</a></li>
+                            <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
                             <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
                         </ul>
                     </div>

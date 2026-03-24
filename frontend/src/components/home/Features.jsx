@@ -55,26 +55,26 @@ const FLOW_STEPS = [
 
 const Features = () => {
     return (
-        <section id="how-it-works" className="bg-slate-50 py-24">
+        <section id="how-it-works" className="bg-slate-50 py-16">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
                 {/* Section header */}
-                <div className="mb-16 text-center">
-                    <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-primary">
+                <div className="mb-12 text-center">
+                    <span className="mb-2 inline-block text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                         HOW IT WORKS
                     </span>
-                    <h2 className="mb-4 text-4xl font-extrabold text-slate-900">Your Path to Mastery</h2>
-                    <p className="mx-auto max-w-2xl text-base text-slate-500">
+                    <h2 className="mb-3 text-3xl font-extrabold text-slate-900">Your Path to Mastery</h2>
+                    <p className="mx-auto max-w-xl text-sm text-slate-500 font-medium">
                         A structured, test-regulated learning system that ensures you master each concept before advancing.
                     </p>
                 </div>
 
                 {/* 3-step cards */}
-                <div className="mb-14 grid gap-6 md:grid-cols-3">
+                <div className="mb-10 grid gap-5 md:grid-cols-3">
                     {STEPS.map((step) => (
                         <div
                             key={step.number}
-                            className={`rounded-2xl border bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${step.border}`}
+                            className={`rounded-2xl border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${step.border}`}
                         >
                             <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl ${step.iconBg}`}>
                                 {step.icon}

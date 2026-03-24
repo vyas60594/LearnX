@@ -22,7 +22,7 @@ const CheckIcon = () => (
 
 const Hero = () => {
     return (
-        <section className="relative overflow-hidden bg-white py-12 lg:py-16">
+        <section className="relative overflow-hidden bg-white py-10 lg:py-14">
             {/* Subtle background grid */}
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:48px_48px] opacity-50" />
 
@@ -40,15 +40,15 @@ const Hero = () => {
                         </div>
 
                         {/* Headline */}
-                        <h1 className="mb-6 text-5xl font-extrabold leading-[1.1] tracking-tight text-slate-900 lg:text-6xl">
+                        <h1 className="mb-4 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 lg:text-5xl">
                             Master Skills.<br />
                             <span className="text-primary">Unlock Careers.</span>
                         </h1>
 
-                        {/* Subheadline */}
-                        <p className="mb-8 max-w-lg text-base leading-relaxed text-slate-500">
-                            A mastery-based learning platform designed for CEIT students and job seekers.
+                        <p className="mb-6 max-w-md text-sm font-medium leading-relaxed text-slate-500">
+                            A mastery-based learning platform built for students to validate skills through rigorous testing.
                         </p>
+
 
                         {/* Feature badges */}
                         <div className="mb-8 flex flex-wrap gap-4">
@@ -66,7 +66,7 @@ const Hero = () => {
                                 to="/register"
                                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 hover:shadow-violet-300 active:scale-95"
                             >
-                                Start Learning Free →
+                                Start Mastery Now →
                             </Link>
                             <a
                                 href="#skill-paths"

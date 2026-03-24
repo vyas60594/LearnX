@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import image3 from '../assets/image3.png';
-import AuthLayout from '../components/layout/AuthLayout';
+import Logo from '../components/ui/Logo';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -9,53 +8,57 @@ const ForgotPassword = () => {
 
     const handleResetRequest = (e) => {
         e.preventDefault();
-        // TODO: call reset password API
+        // Mocking reset password request
         navigate('/check-email', { state: { email } });
     };
 
-    const stairIllustration = (
-        <img src={image3} alt="" />
-    );
-
     return (
-        <AuthLayout
-            title="Build Skills. Prove Mastery. Unlock Your Career."
-            illustration={stairIllustration}
-        >
-            <div className="bg-white p-8 rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100">
-                <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors mb-8">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-                    Back to Login
-                </Link>
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-['Plus_Jakarta_Sans']">
+            {/* Subtle background decoration */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
+            
+            <div className="w-full max-w-[420px] bg-white rounded-2xl p-8 shadow-xl border border-slate-100 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-full -mr-16 -mt-16 blur-2xl" />
+                
+                <div className="relative z-10">
+                    <Link to="/login" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors mb-8 group">
+                        <svg className="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Login
+                    </Link>
 
-                <div className="mb-8">
-                    <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Forgot Your Password?</h2>
-                    <p className="mt-2 text-slate-500 font-medium font-inter">Enter your email address and we'll send you instructions to reset your password.</p>
-                </div>
-
-                <form onSubmit={handleResetRequest} className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="you@example.com"
-                            className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 text-slate-900 transition-all duration-300 hover:bg-white focus:bg-white focus:border-[#6366f1] focus:outline-none focus:ring-4 focus:ring-[#6366f1]/10"
-                        />
+                    <div className="mb-8">
+                        <div className="mb-6 flex justify-center lg:justify-start">
+                            <Logo size="lg" />
+                        </div>
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">Forgot password?</h2>
+                        <p className="mt-2 text-sm text-slate-500 font-medium">No worries, we'll send you reset instructions.</p>
                     </div>
 
-                    <button
-                        type="submit"
-                        className="group relative h-14 w-full overflow-hidden rounded-2xl bg-[#6366f1] text-base font-bold text-white shadow-xl shadow-[#6366f1]/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                        <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                        Send Reset Link
-                    </button>
-                </form>
+                    <form onSubmit={handleResetRequest} className="space-y-5">
+                        <div className="space-y-1.5 text-left">
+                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
+                            <input
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="name@company.com"
+                                className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-900 transition-all focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-400"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="h-12 w-full rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition-all hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-95"
+                        >
+                            Reset Password
+                        </button>
+                    </form>
+                </div>
             </div>
-        </AuthLayout>
+        </div>
     );
 };
 

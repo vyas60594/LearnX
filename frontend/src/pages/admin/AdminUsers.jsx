@@ -32,7 +32,7 @@ const AdminUsers = () => {
 
     const filteredUsers = users.filter(user => {
         const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              user.email.toLowerCase().includes(searchTerm.toLowerCase());
+                            user.email.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'All' || user.status === filterStatus;
         return matchesSearch && matchesStatus;
     });

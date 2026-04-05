@@ -25,7 +25,7 @@ const TopBar = ({ onMenuClick }) => {
       </div>
 
       {/* ── Search bar — hidden on mobile/tablet, shown on lg+ ── */}
-      <div className="relative max-w-md flex-1 group hidden lg:block">
+      <div className="absolute max-w-md flex-1 group hidden lg:block">
         {/* Search icon inside the input */}
         <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -43,7 +43,7 @@ const TopBar = ({ onMenuClick }) => {
 
       {/* ── Right-side actions ── */}
       <div className="flex items-center gap-2 sm:gap-4">
-        
+
         {/* Search icon for mobile (hidden on lg+) */}
         <button className="flex lg:hidden h-10 w-10 items-center justify-center rounded-full border border-slate-200/60 bg-white text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -52,24 +52,7 @@ const TopBar = ({ onMenuClick }) => {
           </svg>
         </button>
 
-        {/* Dark mode toggle button */}
-        <button className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/60 bg-white text-slate-500 hover:bg-slate-50 hover:text-indigo-600 hover:scale-105 active:scale-95 transition-all shadow-sm">
-          {/* Moon icon */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
 
-        {/* Notification bell with red dot */}
-        <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/60 bg-white text-slate-500 hover:bg-slate-50 hover:text-indigo-600 hover:scale-105 active:scale-95 transition-all shadow-sm">
-          {/* Bell icon */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          {/* Red notification dot */}
-          <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
-        </button>
 
         {/* User avatar + name */}
         <div className="flex cursor-pointer items-center ml-1 sm:ml-2 pl-2 sm:border-l sm:border-slate-200">

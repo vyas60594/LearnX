@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { authService } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -14,30 +15,52 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('learnx_user', JSON.stringify(user));
         } else {
             localStorage.removeItem('learnx_user');
+            localStorage.removeItem('learnx_token');
         }
     }, [user]);
+
+    // ── Check if user is already logged in ──
+    useEffect(() => {
+        const checkAuth = async () => {
+            const token = localStorage.getItem('learnx_token');
+            if (token) {
+                try {
+                    const response = await authService.verify();
+                    const userData = {
+                        ...response,
+                        initials: response.username.substring(0, 2).toUpperCase(),
+                        role: 'user',
+                        joined: 'Member'
+                    };
+                    setUser(userData);
+                } catch (err) {
+                    console.error('Session verification failed', err);
+                    setUser(null);
+                }
+            }
+        };
+        checkAuth();
+    }, []);
 
     // ── User Login ──
     const login = async (email, password) => {
         try {
-            await new Promise(resolve => setTimeout(resolve, 800));
-            if (email && password) {
-                const mockUser = {
-                    id: 'usr_' + Math.random().toString(36).substr(2, 9),
-                    name: 'Student User',
-                    email: email,
-                    initials: email.substring(0, 2).toUpperCase(),
-                    role: 'user',
-                    department: 'Computer Science',
-                    joined: 'Joined Today'
-                };
-                setUser(mockUser);
-                return mockUser;
-            }
-            throw new Error('Invalid email or password');
+            const response = await authService.login({ email, password });
+            
+            const userData = {
+                ...response.user,
+                initials: response.user.username.substring(0, 2).toUpperCase(),
+                role: 'user',
+                joined: 'Member'
+            };
+            
+            localStorage.setItem('learnx_token', response.token);
+            setUser(userData);
+            return userData;
         } catch (err) {
-            toast.error(err.message);
-            throw err;
+            const errorMessage = err.response?.data?.error || err.message || 'Login failed';
+            toast.error(errorMessage);
+            throw new Error(errorMessage);
         }
     };
 
@@ -68,24 +91,22 @@ export const AuthProvider = ({ children }) => {
     // ── Register ──
     const register = async (fullName, email, password) => {
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            if (fullName && email && password) {
-                const mockUser = {
-                    id: 'usr_' + Math.random().toString(36).substr(2, 9),
-                    name: fullName,
-                    email: email,
-                    initials: fullName.substring(0, 2).toUpperCase(),
-                    role: 'user',
-                    department: 'Engineering',
-                    joined: 'Joined Today'
-                };
-                setUser(mockUser);
-                return mockUser;
-            }
-            throw new Error('Please fill in all fields correctly');
+            const response = await authService.register({ username: fullName, email, password });
+            
+            const userData = {
+                ...response.user,
+                initials: response.user.username.substring(0, 2).toUpperCase(),
+                role: 'user',
+                joined: 'New Member'
+            };
+            
+            localStorage.setItem('learnx_token', response.token);
+            setUser(userData);
+            return userData;
         } catch (err) {
-            toast.error(err.message);
-            throw err;
+            const errorMessage = err.response?.data?.error || err.message || 'Registration failed';
+            toast.error(errorMessage);
+            throw new Error(errorMessage);
         }
     };
 

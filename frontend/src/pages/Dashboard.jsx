@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Layout Components
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
 

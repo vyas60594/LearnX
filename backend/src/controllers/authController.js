@@ -1,5 +1,6 @@
 import UserModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 export const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -14,7 +15,10 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    const newUser = await UserModel.createUser(username, email, password);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = await UserModel.createUser(username, email, hashedPassword);
     
     const token = jwt.sign(
       { id: newUser.id, email: newUser.email },
@@ -46,8 +50,8 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // In a real app, compare hashed password
-    if (user.password !== password) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 

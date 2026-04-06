@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import Logo from '../ui/Logo';
 
 const NAV_LINKS = [

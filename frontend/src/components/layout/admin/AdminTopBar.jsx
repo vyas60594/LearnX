@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../hooks/useAuth';
 
 const AdminTopBar = ({ onMenuClick }) => {
     const { user } = useAuth();

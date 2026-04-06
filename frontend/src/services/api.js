@@ -70,4 +70,8 @@ export const progressService = {
     updateProgress: (data) => api.post('/progress', data),
 };
 
+export const adminService = {
+    getStats: () => api.get('/admin/stats'),
+};
+
 export default api;

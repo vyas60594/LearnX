@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { authService } from '../services/api';
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
@@ -46,14 +46,14 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const response = await authService.login({ email, password });
-            
+
             const userData = {
                 ...response.user,
                 initials: response.user.username.substring(0, 2).toUpperCase(),
                 role: 'user',
                 joined: 'Member'
             };
-            
+
             localStorage.setItem('learnx_token', response.token);
             setUser(userData);
             return userData;
@@ -78,6 +78,9 @@ export const AuthProvider = ({ children }) => {
                     token: 'mock-jwt-admin-token-987xyz',
                     lastLogin: new Date().toISOString()
                 };
+
+                // IMPORTANT: Save the token so the API interceptor can find it!
+                localStorage.setItem('learnx_token', mockAdmin.token);
                 setUser(mockAdmin);
                 return mockAdmin;
             }
@@ -92,14 +95,14 @@ export const AuthProvider = ({ children }) => {
     const register = async (fullName, email, password) => {
         try {
             const response = await authService.register({ username: fullName, email, password });
-            
+
             const userData = {
                 ...response.user,
                 initials: response.user.username.substring(0, 2).toUpperCase(),
                 role: 'user',
                 joined: 'New Member'
             };
-            
+
             localStorage.setItem('learnx_token', response.token);
             setUser(userData);
             return userData;
@@ -124,12 +127,4 @@ export const AuthProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     );
-};
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
 };

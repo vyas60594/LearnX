@@ -9,7 +9,7 @@
 import { useState } from 'react';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { SKILL_PATHS } from '../data/dashboardData';
 
 const STATS = [

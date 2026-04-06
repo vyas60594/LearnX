@@ -26,9 +26,14 @@ const Register = () => {
         }
         setLoading(true);
         try {
-            await register(fullName, email, password);
+            const userData = await register(fullName, email, password);
             toast.success('Account created successfully!');
-            navigate('/dashboard');
+            
+            if (userData.role?.toLowerCase() === 'admin') {
+                navigate('/admin/dashboard');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             toast.error(err.message || 'Registration failed. Please try again.');
         } finally {

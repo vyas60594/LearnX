@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 import { adminService } from '../../services/api';
-import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
     const { user } = useAuth();
@@ -45,7 +45,7 @@ const AdminDashboard = () => {
             {/* Quick Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat, idx) => (
-                    <div key={idx} className={`bg-gradient-to-br ${stat.color} rounded-2xl p-6 text-white shadow-lg overflow-hidden relative`}>
+                    <div key={idx} className={`bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl p-6 text-white shadow-lg overflow-hidden relative`}>
                         <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full blur-2xl font-bold"></div>
                         <p className="text-white/80 font-bold tracking-wider text-xs uppercase mb-1">{stat.label}</p>
                         <h3 className="text-3xl font-black mb-2">{stat.value}</h3>

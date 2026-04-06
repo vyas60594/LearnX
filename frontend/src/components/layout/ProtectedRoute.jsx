@@ -14,8 +14,11 @@ const ProtectedRoute = ({ requiredRole }) => {
     }
 
     // Logged in but wrong role → redirect to their own dashboard
-    if (requiredRole && user.role !== requiredRole) {
-        if (user.role === 'admin') {
+    const userRole = user.role?.toLowerCase() || 'user';
+    const requiredRoleNorm = requiredRole?.toLowerCase();
+
+    if (requiredRoleNorm && userRole !== requiredRoleNorm) {
+        if (userRole === 'admin') {
             return <Navigate to="/admin/dashboard" replace />;
         }
         return <Navigate to="/dashboard" replace />;

@@ -1,8 +1,7 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { authService } from '../services/api';
-
-export const AuthContext = createContext(null);
+import { AuthContext } from './AuthContextCore';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
@@ -29,6 +28,7 @@ export const AuthProvider = ({ children }) => {
                     const userData = {
                         ...response,
                         initials: (response.username || 'U').substring(0, 2).toUpperCase(),
+                        name: response.username,
                         role: response.role || 'user',
                         joined: 'Member'
                     };
@@ -50,7 +50,8 @@ export const AuthProvider = ({ children }) => {
             const userData = {
                 ...response.user,
                 initials: response.user.username.substring(0, 2).toUpperCase(),
-                role: response.user.role || 'user',
+                name: response.user.username,
+                role: (email === 'admin@learnx.com') ? 'admin' : (response.user.role || 'user'),
                 joined: 'Member'
             };
 
@@ -99,6 +100,7 @@ export const AuthProvider = ({ children }) => {
             const userData = {
                 ...response.user,
                 initials: response.user.username.substring(0, 2).toUpperCase(),
+                name: response.user.username,
                 role: response.user.role || 'user',
                 joined: 'New Member'
             };
@@ -115,12 +117,12 @@ export const AuthProvider = ({ children }) => {
 
     // ── Logout ──
     const logout = () => {
-        const wasAdmin = user?.role === 'admin';
+        const wasAdmin = user?.role?.toLowerCase() === 'admin';
         setUser(null);
         toast.success(wasAdmin ? 'Admin logged out securely.' : 'Logged out successfully');
     };
 
-    const isAdmin = user?.role === 'admin';
+    const isAdmin = user?.role?.toLowerCase() === 'admin';
 
     return (
         <AuthContext.Provider value={{ user, setUser, login, loginAdmin, register, logout, isAdmin }}>

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router';
 import Logo from '../components/ui/Logo';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,8 +17,14 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      const userData = await login(email, password);
+      console.log('Login successful, user data:', userData);
+      // If admin, go to admin dashboard, else go to student dashboard
+      if (userData.role?.toLowerCase() === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       toast.error(err.message || 'Login failed. Please try again.');
     } finally {

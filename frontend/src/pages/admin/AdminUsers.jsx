@@ -78,8 +78,13 @@ const AdminUsers = () => {
 
     const openEditModal = (user) => {
         setEditingUser(user);
-        setEditRole(user.role);
-        setEditStatus(user.status);
+        
+        // Handle mismatched casing for the select dropdown (map to Admin, Student)
+        const roleLower = (user.role || 'user').toLowerCase();
+        const roleDisplay = roleLower === 'admin' ? 'Admin' : 'Student';
+        setEditRole(roleDisplay);
+        
+        setEditStatus(user.status || 'Active');
         setIsEditOpen(true);
     };
 

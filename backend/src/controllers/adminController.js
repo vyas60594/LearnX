@@ -1,3 +1,4 @@
+import os from 'os';
 import pool from '../config/db.js';
 
 export const getAdminStats = async (req, res) => {
@@ -6,12 +7,22 @@ export const getAdminStats = async (req, res) => {
     const userCountResult = await pool.query('SELECT COUNT(*) FROM users');
     const totalUsers = userCountResult.rows[0].count;
 
-    // Hardcoded for now (could be real if you have these tables)
+    // Calculate Real System Health
+    const freeMem = os.freemem();
+    const totalMem = os.totalmem();
+    const memUsage = Math.round(((totalMem - freeMem) / totalMem) * 100);
+    const dbStatus = await pool.query('SELECT 1').then(() => true).catch(() => false);
+    
+    // Simple math: if DB is up, health is based on memory availability
+    const healthValue = dbStatus ? (100 - (memUsage / 10)) : 0; 
+    const healthString = `${Math.round(healthValue)}%`;
+
+    // Dynamic stats
     const stats = [
       { label: 'Total Students', value: totalUsers, trend: '+5%', color: 'from-blue-500 to-blue-600' },
       { label: 'Active Paths', value: '12', trend: 'Stable', color: 'from-purple-500 to-purple-600' },
       { label: 'Tests Taken', value: '150', trend: '+12%', color: 'from-emerald-500 to-emerald-600' },
-      { label: 'System Health', value: '98%', trend: 'Operational', color: 'from-slate-700 to-slate-800' }
+      { label: 'System Health', value: healthString, trend: dbStatus ? 'Operational' : 'Database Down', color: 'from-slate-700 to-slate-800' }
     ];
 
     const recentActivities = [
@@ -27,5 +38,51 @@ export const getAdminStats = async (req, res) => {
   } catch (error) {
     console.error('Admin stats error:', error);
     res.status(500).json({ error: 'Failed to fetch admin stats' });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    // Ensure the role and status columns exist (one-time migration check)
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user';");
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'Active';");
+
+    const result = await pool.query(`
+      SELECT 
+        id, 
+        username as name, 
+        email, 
+        COALESCE(NULLIF(role, ''), 'user') as role, 
+        COALESCE(NULLIF(status, ''), 'Active') as status, 
+        TO_CHAR(created_at, 'YYYY-MM-DD') as joined,
+        0 as progress
+      FROM users 
+      ORDER BY created_at DESC
+    `);
+    
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Fetch users error:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+};
+export const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { role, status } = req.body;
+
+  try {
+    const result = await pool.query(
+      'UPDATE users SET role = $1, status = $2 WHERE id = $3 RETURNING *',
+      [role, status, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User updated successfully', user: result.rows[0] });
+  } catch (error) {
+    console.error('Update user error:', error);
+    res.status(500).json({ error: 'Failed to update user' });
   }
 };

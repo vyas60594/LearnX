@@ -28,8 +28,8 @@ export const AuthProvider = ({ children }) => {
                     const response = await authService.verify();
                     const userData = {
                         ...response,
-                        initials: response.username.substring(0, 2).toUpperCase(),
-                        role: 'user',
+                        initials: (response.username || 'U').substring(0, 2).toUpperCase(),
+                        role: response.role || 'user',
                         joined: 'Member'
                     };
                     setUser(userData);
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
             const userData = {
                 ...response.user,
                 initials: response.user.username.substring(0, 2).toUpperCase(),
-                role: 'user',
+                role: response.user.role || 'user',
                 joined: 'Member'
             };
 
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
             const userData = {
                 ...response.user,
                 initials: response.user.username.substring(0, 2).toUpperCase(),
-                role: 'user',
+                role: response.user.role || 'user',
                 joined: 'New Member'
             };
 

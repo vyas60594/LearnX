@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-
-// Mock large dataset for datatable demonstration
-const MOCK_USERS = Array.from({ length: 45 }).map((_, i) => ({
-    id: `usr_${i + 100}`,
-    name: [
-        'Arjun Kumar', 'Priya Sharma', 'Rahul Verma', 'Sneha Patel', 
-        'Anjali Singh', 'Vikram Mehta', 'Neha Gupta', 'Rohan Das'
-    ][i % 8] + ` ${i}`,
-    email: `student${i}@example.com`,
-    role: i % 15 === 0 ? 'Admin' : 'Student',
-    status: i % 7 === 0 ? 'Suspended' : 'Active',
-    joined: `2026-01-${Math.floor(Math.random() * 28 + 1).toString().padStart(2, '0')}`,
-    progress: Math.floor(Math.random() * 100)
-}));
+import { adminService } from '../../services/api';
 
 const AdminUsers = () => {
-    const [users, setUsers] = useState(MOCK_USERS);
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('All');
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const data = await adminService.getUsers();
+                setUsers(data);
+            } catch (err) {
+                toast.error('Failed to load users');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     // Modals State
     const [isInviteOpen, setIsInviteOpen] = useState(false);
@@ -55,13 +58,22 @@ const AdminUsers = () => {
         setInviteEmail('');
     };
 
-    const handleEditSave = (e) => {
+    const handleEditSave = async (e) => {
         e.preventDefault();
-        setUsers(users.map(u => 
-            u.id === editingUser.id ? { ...u, role: editRole, status: editStatus } : u
-        ));
-        toast.success(`Updated ${editingUser.name}`);
-        setIsEditOpen(false);
+        try {
+            await adminService.updateUser(editingUser.id, { role: editRole, status: editStatus });
+            
+            // Update local state to reflect changes without a full hard reload
+            setUsers(users.map(u => 
+                u.id === editingUser.id ? { ...u, role: editRole, status: editStatus } : u
+            ));
+            
+            toast.success(`Updated ${editingUser.name} successfully`);
+            setIsEditOpen(false);
+        } catch (err) {
+            toast.error('Failed to update user');
+            console.error(err);
+        }
     };
 
     const openEditModal = (user) => {
@@ -128,51 +140,59 @@ const AdminUsers = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {filteredUsers.slice(0, 10).map((user) => (
-                                <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">
-                                                {user.name.substring(0, 2).toUpperCase()}
-                                            </div>
-                                            <div>
-                                                <div className="font-bold text-slate-900 text-sm">{user.name}</div>
-                                                <div className="text-slate-500 text-xs font-medium">{user.email}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
-                                            user.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-                                        }`}>
-                                            {user.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-semibold text-slate-700">{user.role}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-full bg-slate-100 rounded-full h-2 w-24">
-                                                <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${user.progress}%` }}></div>
-                                            </div>
-                                            <span className="text-xs font-bold text-slate-600">{user.progress}%</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
-                                        {user.joined}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button 
-                                            onClick={() => openEditModal(user)}
-                                            className="text-indigo-600 hover:text-indigo-900 font-bold transition-colors"
-                                        >
-                                            Edit
-                                        </button>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="6" className="px-6 py-12 text-center">
+                                        <div className="inline-block w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                                        <p className="mt-2 text-sm font-bold text-slate-500">Retrieving system members...</p>
                                     </td>
                                 </tr>
-                            ))}
-                            {filteredUsers.length === 0 && (
+                            ) : filteredUsers.length > 0 ? (
+                                filteredUsers.map((user) => (
+                                    <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">
+                                                    {(user.name || 'U').substring(0, 2).toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold text-slate-900 text-sm">{user.name}</div>
+                                                    <div className="text-slate-500 text-xs font-medium">{user.email}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
+                                                user.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                                            }`}>
+                                                {user.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-semibold text-slate-700 uppercase tracking-wide">{user.role}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-full bg-slate-100 rounded-full h-2 w-24">
+                                                    <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${user.progress}%` }}></div>
+                                                </div>
+                                                <span className="text-xs font-bold text-slate-600">{user.progress}%</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
+                                            {user.joined}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button 
+                                                onClick={() => openEditModal(user)}
+                                                className="text-indigo-600 hover:text-indigo-900 font-bold transition-colors"
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
                                 <tr>
                                     <td colSpan="6" className="px-6 py-12 text-center text-slate-500 font-medium">
                                         No users found matching your criteria.

@@ -72,6 +72,8 @@ export const progressService = {
 
 export const adminService = {
     getStats: () => api.get('/admin/stats'),
+    getUsers: () => api.get('/admin/users'),
+    updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
 };
 
 export default api;

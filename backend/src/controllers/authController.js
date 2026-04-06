@@ -55,6 +55,10 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
+    if (user.status === 'Suspended') {
+      return res.status(403).json({ error: 'Account Suspended: Please contact support for access.' });
+    }
+
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET || 'secret',
@@ -63,7 +67,12 @@ export const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: 'Login successful',
-      user: { id: user.id, username: user.username, email: user.email },
+      user: { 
+        id: user.id, 
+        username: user.username, 
+        email: user.email,
+        role: user.role 
+      },
       token
     });
   } catch (error) {
@@ -74,14 +83,30 @@ export const loginUser = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
+    // Check if it's the master admin
+    if (req.user.email === 'admin@learnx.com') {
+      return res.status(200).json({
+        id: 'adm_master_001',
+        username: 'System Administrator',
+        email: 'admin@learnx.com',
+        role: 'admin'
+      });
+    }
+
     const user = await UserModel.findByEmail(req.user.email);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    if (user.status === 'Suspended') {
+      return res.status(403).json({ error: 'Account Suspended' });
+    }
+
     res.status(200).json({ 
       id: user.id, 
       username: user.username, 
-      email: user.email 
+      email: user.email,
+      role: user.role || 'user'
     });
   } catch (error) {
     console.error('Get profile error:', error);

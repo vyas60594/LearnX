@@ -74,6 +74,7 @@ export const adminService = {
     getStats: () => api.get('/admin/stats'),
     getUsers: () => api.get('/admin/users'),
     updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
+    inviteUser: (data) => api.post('/admin/invite', data),
 };
 
 export default api;

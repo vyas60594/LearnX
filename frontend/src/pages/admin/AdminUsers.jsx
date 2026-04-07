@@ -40,22 +40,21 @@ const AdminUsers = () => {
         return matchesSearch && matchesStatus;
     });
 
-    const handleInvite = (e) => {
+    const handleInvite = async (e) => {
         e.preventDefault();
-        // Mock add logic
-        const newUser = {
-            id: `usr_${Date.now()}`,
-            name: inviteEmail.split('@')[0],
-            email: inviteEmail,
-            role: inviteRole,
-            status: 'Active',
-            joined: 'Just now',
-            progress: 0
-        };
-        setUsers([newUser, ...users]);
-        toast.success(`Invitation sent to ${inviteEmail}`);
-        setIsInviteOpen(false);
-        setInviteEmail('');
+        try {
+            const response = await adminService.inviteUser({ email: inviteEmail, role: inviteRole });
+            
+            // Add the real new user from backend response to the local list
+            setUsers([response.user, ...users]);
+            
+            toast.success(response.message || `Invitation sent to ${inviteEmail}`);
+            setIsInviteOpen(false);
+            setInviteEmail('');
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to send invitation');
+            console.error(err);
+        }
     };
 
     const handleEditSave = async (e) => {

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import UserModel from '../models/userModel.js';
+import { logActivity } from '../utils/activityLogger.js';
 
 export const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -20,6 +21,9 @@ export const registerUser = async (req, res) => {
 
     const newUser = await UserModel.createUser(username, email, hashedPassword);
     
+    // Log registration activity
+    await logActivity(newUser.id, 'New user registered');
+
     const token = jwt.sign(
       { id: newUser.id, email: newUser.email },
       process.env.JWT_SECRET || 'secret',
@@ -64,6 +68,9 @@ export const loginUser = async (req, res) => {
       process.env.JWT_SECRET || 'secret',
       { expiresIn: '24h' }
     );
+
+    // Log login activity
+    await logActivity(user.id, 'User logged in');
 
     res.status(200).json({
       message: 'Login successful',

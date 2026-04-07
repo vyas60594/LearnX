@@ -2,12 +2,53 @@ import os from 'os';
 import pool from '../config/db.js';
 import bcrypt from 'bcryptjs';
 import { sendInvitationEmail } from '../services/emailService.js';
+import { logActivity } from '../utils/activityLogger.js';
 
 export const getAdminStats = async (req, res) => {
   try {
-    // Real query for total users
-    const userCountResult = await pool.query('SELECT COUNT(*) FROM users');
-    const totalUsers = userCountResult.rows[0].count;
+    // Self-healing migration check (ensure tables exist)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS skill_paths (
+          id SERIAL PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          description TEXT,
+          image_url TEXT,
+          color VARCHAR(20),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      CREATE TABLE IF NOT EXISTS activities (
+          id SERIAL PRIMARY KEY,
+          user_id INT REFERENCES users(id) ON DELETE CASCADE,
+          action VARCHAR(255) NOT NULL,
+          metadata JSONB,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      CREATE TABLE IF NOT EXISTS user_test_scores (
+          id SERIAL PRIMARY KEY,
+          user_id INT REFERENCES users(id) ON DELETE CASCADE,
+          score INT NOT NULL,
+          total_questions INT NOT NULL,
+          taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Individual queries with error handling for missing tables
+    let totalUsers = 0, totalPaths = 0, totalTests = 0;
+    
+    try {
+      const userCountResult = await pool.query('SELECT COUNT(*) FROM users');
+      totalUsers = userCountResult.rows[0].count;
+    } catch(e) { console.error('Error fetching users:', e.message); }
+
+    try {
+      const pathCountResult = await pool.query('SELECT COUNT(*) FROM skill_paths');
+      totalPaths = pathCountResult.rows[0].count;
+    } catch(e) { console.error('Error fetching paths:', e.message); }
+
+    try {
+      const testCountResult = await pool.query('SELECT COUNT(*) FROM user_test_scores');
+      totalTests = testCountResult.rows[0].count;
+    } catch(e) { console.error('Error fetching tests:', e.message); }
 
     // Calculate Real System Health
     const freeMem = os.freemem();
@@ -15,23 +56,48 @@ export const getAdminStats = async (req, res) => {
     const memUsage = Math.round(((totalMem - freeMem) / totalMem) * 100);
     const dbStatus = await pool.query('SELECT 1').then(() => true).catch(() => false);
     
-    // Simple math: if DB is up, health is based on memory availability
     const healthValue = dbStatus ? (100 - (memUsage / 10)) : 0; 
     const healthString = `${Math.round(healthValue)}%`;
 
-    // Dynamic stats
     const stats = [
       { label: 'Total Students', value: totalUsers, trend: '+5%', color: 'from-blue-500 to-blue-600' },
-      { label: 'Active Paths', value: '12', trend: 'Stable', color: 'from-purple-500 to-purple-600' },
-      { label: 'Tests Taken', value: '150', trend: '+12%', color: 'from-emerald-500 to-emerald-600' },
+      { label: 'Active Paths', value: totalPaths, trend: 'Stable', color: 'from-purple-500 to-purple-600' },
+      { label: 'Tests Taken', value: totalTests, trend: '+12%', color: 'from-emerald-500 to-emerald-600' },
       { label: 'System Health', value: healthString, trend: dbStatus ? 'Operational' : 'Database Down', color: 'from-slate-700 to-slate-800' }
     ];
 
-    const recentActivities = [
-      { id: 1, action: 'User registered', user: 'New Student', time: '10 mins ago' },
-      { id: 2, action: 'Course updated', user: 'Admin', time: '1 hour ago' },
-      { id: 3, action: 'Test completed', user: 'John Doe', time: '2 hours ago' }
-    ];
+    // Fetch real activities - join with users to get names
+    let recentActivities = [];
+    try {
+      const activitiesResult = await pool.query(`
+        SELECT 
+          a.id, 
+          a.action, 
+          COALESCE(u.username, 'System') as user,
+          a.created_at as raw_time
+        FROM activities a
+        LEFT JOIN users u ON a.user_id = u.id
+        ORDER BY a.created_at DESC
+        LIMIT 10
+      `);
+
+      // Format time for frontend (simple helper)
+      const formatTime = (date) => {
+        const now = new Date();
+        const diff = Math.floor((now - new Date(date)) / 1000);
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)} mins ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+        return new Date(date).toLocaleDateString();
+      };
+
+      recentActivities = activitiesResult.rows.map(row => ({
+        id: row.id,
+        action: row.action,
+        user: row.user,
+        time: formatTime(row.raw_time)
+      }));
+    } catch(e) { console.error('Error fetching activities:', e.message); }
 
     res.status(200).json({
       stats,
@@ -82,6 +148,9 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Log this activity
+    await logActivity(req.user?.id, `Updated user ${result.rows[0].username} to ${role}/${status}`, { target_user_id: id });
+
     res.status(200).json({ message: 'User updated successfully', user: result.rows[0] });
   } catch (error) {
     console.error('Update user error:', error);
@@ -117,6 +186,9 @@ export const inviteUser = async (req, res) => {
       'INSERT INTO users (username, email, password, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, status',
       [username, email, hashedPassword, role, 'Invited']
     );
+
+    // Log this activity
+    await logActivity(req.user?.id, `Invited user ${email} as ${role}`, { invited_email: email });
 
     // Send Real Invitation Email via Nodemailer
     const emailSent = await sendInvitationEmail(email, username, defaultPassword);

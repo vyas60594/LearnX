@@ -9,7 +9,7 @@ export const authMiddleware = (req, res, next) => {
 
   // Temporary development bypass for mock admin token
   if (token === 'mock-jwt-admin-token-987xyz') {
-    req.user = { email: 'admin@learnx.com', role: 'admin' };
+    req.user = { id: 1, email: 'admin@learnx.com', role: 'admin' };
     return next();
   }
 

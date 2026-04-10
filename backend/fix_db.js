@@ -11,7 +11,7 @@ async function fix() {
     console.log('Applying core database schema...');
     
     // Core tables used by admin stats - Run individually to ensure completion
-    console.log('Creating skill_paths...');
+    console.log('Ensuring skill_paths structure...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS skill_paths (
           id SERIAL PRIMARY KEY,
@@ -19,8 +19,16 @@ async function fix() {
           description TEXT,
           image_url TEXT,
           color VARCHAR(20),
+          status VARCHAR(20) DEFAULT 'Draft',
+          content JSONB DEFAULT '{}',
+          modules_count INT DEFAULT 0,
+          levels_count INT DEFAULT 0,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+      ALTER TABLE skill_paths ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'Draft';
+      ALTER TABLE skill_paths ADD COLUMN IF NOT EXISTS content JSONB DEFAULT '{}';
+      ALTER TABLE skill_paths ADD COLUMN IF NOT EXISTS modules_count INT DEFAULT 0;
+      ALTER TABLE skill_paths ADD COLUMN IF NOT EXISTS levels_count INT DEFAULT 0;
     `);
 
     console.log('Creating activities...');
@@ -45,6 +53,12 @@ async function fix() {
       );
     `);
     
+    console.log('Ensuring user status and role columns...');
+    await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user';
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'Active';
+    `);
+
     console.log('Success: Core tables ensured.');
     process.exit(0);
   } catch (err) {

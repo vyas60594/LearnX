@@ -20,10 +20,10 @@ export default function ModuleCard({ mod, levelStatus, onStart, onReview }) {
                     )}
                 </div>
                 <p className="text-[11px] font-bold text-slate-400 truncate">{mod.desc}</p>
-                {mod.topics && (
+                {mod.topics && Array.isArray(mod.topics) && mod.topics.length > 0 && (
                     <div className="flex gap-2 mt-2">
                         {mod.topics.map(t => (
-                            <span key={t} className="text-[9px] font-black text-slate-300 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded uppercase leading-none">#{t}</span>
+                            <span key={t} className="text-[9px] font-black text-slate-300 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded uppercase leading-none">#{t}</span>
                         ))}
                     </div>
                 )}

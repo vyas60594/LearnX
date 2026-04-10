@@ -75,6 +75,18 @@ export const adminService = {
     getUsers: () => api.get('/admin/users'),
     updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
     inviteUser: (data) => api.post('/admin/invite', data),
+    
+    // Skill Paths Admin
+    getSkillPaths: () => api.get('/admin/skill-paths'),
+    getSkillPathById: (id) => api.get(`/admin/skill-paths/${id}`),
+    createSkillPath: (data) => api.post('/admin/skill-paths', data),
+    updateSkillPath: (id, data) => api.put(`/admin/skill-paths/${id}`, data),
+    deleteSkillPath: (id) => api.delete(`/admin/skill-paths/${id}`),
+};
+
+export const skillPathService = {
+    getAll: () => api.get('/skill-paths'),
+    getById: (id) => api.get(`/skill-paths/${id}`),
 };
 
 export default api;

@@ -26,7 +26,7 @@ export default function LevelSection({ level, index, onStartModule, onReviewModu
 
             {/* Modules List */}
             <div className="space-y-4">
-                {level.modules.map((mod, mIdx) => (
+                {level.modules && Array.isArray(level.modules) && level.modules.map((mod, mIdx) => (
                     <ModuleCard
                         key={mIdx}
                         mod={mod}

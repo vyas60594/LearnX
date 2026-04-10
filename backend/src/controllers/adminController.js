@@ -1,37 +1,11 @@
+import bcrypt from 'bcryptjs';
 import os from 'os';
 import pool from '../config/db.js';
-import bcrypt from 'bcryptjs';
 import { sendInvitationEmail } from '../services/emailService.js';
 import { logActivity } from '../utils/activityLogger.js';
 
 export const getAdminStats = async (req, res) => {
   try {
-    // Self-healing migration check (ensure tables exist)
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS skill_paths (
-          id SERIAL PRIMARY KEY,
-          title VARCHAR(255) NOT NULL,
-          description TEXT,
-          image_url TEXT,
-          color VARCHAR(20),
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-      CREATE TABLE IF NOT EXISTS activities (
-          id SERIAL PRIMARY KEY,
-          user_id INT REFERENCES users(id) ON DELETE CASCADE,
-          action VARCHAR(255) NOT NULL,
-          metadata JSONB,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-      CREATE TABLE IF NOT EXISTS user_test_scores (
-          id SERIAL PRIMARY KEY,
-          user_id INT REFERENCES users(id) ON DELETE CASCADE,
-          score INT NOT NULL,
-          total_questions INT NOT NULL,
-          taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
     // Individual queries with error handling for missing tables
     let totalUsers = 0, totalPaths = 0, totalTests = 0;
     
@@ -111,10 +85,6 @@ export const getAdminStats = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    // Ensure the role and status columns exist (one-time migration check)
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user';");
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'Active';");
-
     const result = await pool.query(`
       SELECT 
         id, 
@@ -166,10 +136,6 @@ export const inviteUser = async (req, res) => {
   }
 
   try {
-    // Migration check (ensure columns exist before use)
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user';");
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'Active';");
-
     // Check if user exists
     const checkResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (checkResult.rows.length > 0) {

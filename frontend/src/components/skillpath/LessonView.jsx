@@ -21,12 +21,13 @@ export default function LessonView({
                     </button>
                     <div className="bg-slate-50 rounded-[32px] p-10 border border-slate-100">
                         <h2 className="text-3xl font-black text-slate-900 mb-4">{viewingModule.title}</h2>
-                        <p className="text-slate-500 font-medium leading-relaxed mb-8">
-                            {viewingModule.desc} This module contains detailed educational material, interactive code editors, and self-assessment quizzes to ensure you master the topic.
-                        </p>
-                        <div className="h-64 bg-white rounded-2xl border border-slate-200 flex items-center justify-center text-slate-300 font-bold italic">
-                            [ Interactive Lesson Content Area ]
+                        
+                        <div className="prose prose-slate max-w-none mt-6">
+                            <div className="bg-white rounded-2xl border border-slate-200 p-8 text-slate-700 font-medium leading-relaxed whitespace-pre-wrap shadow-sm min-h-[400px]">
+                                {viewingModule.longContent || "No content added for this module yet. Admin is working on it!"}
+                            </div>
                         </div>
+
                         <div className="mt-10 flex justify-end">
                             <button onClick={() => setViewingModule(null)} className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-100">
                                 Complete Module

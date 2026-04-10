@@ -9,9 +9,7 @@ import LevelSection from '../components/skillpath/LevelSection';
 import PathHeader from '../components/skillpath/PathHeader';
 import ResultView from '../components/skillpath/ResultView';
 import TestView from '../components/skillpath/TestView';
-
-// Data
-import { getPathData } from '../data/skillPathsData';
+import { skillPathService } from '../services/api';
 
 export default function SkillPathDetail() {
     const { id } = useParams();
@@ -19,6 +17,8 @@ export default function SkillPathDetail() {
 
     // UI State
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [path, setPath] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [viewingModule, setViewingModule] = useState(null);
 
     // Test State
@@ -26,12 +26,30 @@ export default function SkillPathDetail() {
     const [testResult, setTestResult] = useState(null);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState({});
-    const [timeLeft, setTimeLeft] = useState(0); // Actual value set by handleTakeTest
+    const [timeLeft, setTimeLeft] = useState(0); 
 
     // Track which level the active mastery test belongs to
     const activeLevelIdxRef = useRef(null);
 
-    const path = getPathData(id);
+    useEffect(() => {
+        const fetchPath = async () => {
+            try {
+                const data = await skillPathService.getById(id);
+                // The API stores content in 'content' field
+                const normalizedPath = {
+                    ...data,
+                    levels: data.content?.levels || []
+                };
+                setPath(normalizedPath);
+            } catch (error) {
+                console.error('Failed to fetch path:', error);
+                navigate('/skill-paths');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchPath();
+    }, [id, navigate]);
 
     // ── Unlocked Levels ─────────────────────────────────────────────
     // Persisted to localStorage per path so progress survives page refresh.
@@ -122,13 +140,22 @@ export default function SkillPathDetail() {
 
     const handleStartModule = (mod, levelIdx) => {
         if (mod.type === 'test') {
-            handleTakeTest(mod, levelIdx);
+            // Passing null as levelIdx ensures this in-module quiz 
+            // does NOT trigger a phase unlock in handleFinishTest
+            handleTakeTest(mod, null);
         } else {
             setViewingModule(mod);
         }
     };
 
-    // Merge static data with dynamic unlock status
+    // ── Sub-view rendering ───────────────────────────────────────────
+    if (isLoading) {
+        return <div className="flex h-screen items-center justify-center font-black text-slate-400 animate-pulse">Loading Mastering Journey...</div>;
+    }
+
+    if (!path) return null;
+
+    // Derived state (only if path exists)
     const levelsWithStatus = path.levels.map((level, idx) => ({
         ...level,
         status: unlockedLevels.includes(idx) ? 'current' : 'locked',
@@ -136,7 +163,6 @@ export default function SkillPathDetail() {
 
     const allLevelsUnlocked = unlockedLevels.length >= path.levels.length;
 
-    // ── Sub-view rendering ───────────────────────────────────────────
     if (testResult) {
         return (
             <ResultView

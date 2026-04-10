@@ -1,13 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
 import PathCard from '../components/skillpaths/PathCard';
-
-// Data
-import { PATHS } from '../data/skillPathsListData';
+import { skillPathService } from '../services/api';
 
 export default function SkillPathsPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [paths, setPaths] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPaths = async () => {
+            try {
+                const data = await skillPathService.getAll();
+                // Filter only published paths for users
+                setPaths(data.filter(p => p.status === 'Published'));
+            } catch (error) {
+                console.error('Failed to fetch skill paths:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchPaths();
+    }, []);
 
     return (
         <div className="flex h-screen overflow-hidden bg-slate-50">
@@ -31,11 +46,24 @@ export default function SkillPathsPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {PATHS.map((path) => (
-                            <PathCard key={path.title} path={path} />
-                        ))}
-                    </div>
+                    {isLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {[1, 2].map(i => (
+                                <div key={i} className="h-64 bg-slate-200 animate-pulse rounded-3xl" />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {paths.map((path) => (
+                                <PathCard key={path.id} path={path} />
+                            ))}
+                            {paths.length === 0 && (
+                                <div className="col-span-full py-20 text-center font-bold text-slate-400">
+                                    No skill paths available yet. Check back later!
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </main>
             </div>
         </div>

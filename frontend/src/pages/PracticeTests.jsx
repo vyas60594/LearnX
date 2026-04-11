@@ -1,23 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
-import { PRACTICE_TESTS, PRACTICE_TESTS_CATEGORIES, PRACTICE_TESTS_LEVELS } from '../data/practiceTestsData';
+import { practiceTestService } from '../services/api';
+import { PRACTICE_TESTS_CATEGORIES, PRACTICE_TESTS_LEVELS } from '../data/practiceTestsData';
 
 export default function PracticeTests() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedLevel, setSelectedLevel] = useState('All');
+    const [tests, setTests] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchTests();
+    }, []);
+
+    const fetchTests = async () => {
+        try {
+            setLoading(true);
+            const data = await practiceTestService.getAll();
+            setTests(data);
+        } catch (error) {
+            console.error('Failed to fetch practice tests:', error);
+            // Fallback to static data if API fails or is empty for demo purposes
+            // setTests(PRACTICE_TESTS); 
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleStartPractice = (id) => {
         navigate(`/practice-test/${id}`);
     };
 
-    const filteredTests = PRACTICE_TESTS.filter(test => {
+    const filteredTests = tests.filter(test => {
         const matchesSearch = test.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            test.description.toLowerCase().includes(searchQuery.toLowerCase());
+            (test.description || '').toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === 'All' || test.category === selectedCategory;
         const matchesLevel = selectedLevel === 'All' || test.level === selectedLevel;
         return matchesSearch && matchesCategory && matchesLevel;
@@ -150,12 +171,16 @@ export default function PracticeTests() {
 
                     <div className="mb-6 flex items-center justify-between text-sm">
                         <p className="text-slate-500 font-medium">
-                            Showing <span className="text-slate-900 font-bold">{filteredTests.length}</span> practice tests
+                            Showing <span className="text-slate-900 font-bold">{loading ? '...' : filteredTests.length}</span> practice tests
                         </p>
                     </div>
 
                     {/* Grid Layout */}
-                    {filteredTests.length === 0 ? (
+                    {loading ? (
+                        <div className="flex justify-center py-20">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                        </div>
+                    ) : filteredTests.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center">
                             <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
                                 <svg className="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -164,14 +189,16 @@ export default function PracticeTests() {
                             </div>
                             <h3 className="text-lg font-bold text-slate-700 mb-1">No practice tests found</h3>
                             <p className="text-slate-400 text-sm font-medium max-w-xs">
-                                Try adjusting your search or filters to find what you're looking for.
+                                {tests.length === 0 ? "Admin hasn't added any tests yet." : "Try adjusting your search or filters to find what you're looking for."}
                             </p>
-                            <button
-                                onClick={() => { setSearchQuery(''); setSelectedCategory('All'); setSelectedLevel('All'); }}
-                                className="mt-6 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all"
-                            >
-                                Clear Filters
-                            </button>
+                            {tests.length > 0 && (
+                                <button
+                                    onClick={() => { setSearchQuery(''); setSelectedCategory('All'); setSelectedLevel('All'); }}
+                                    className="mt-6 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all"
+                                >
+                                    Clear Filters
+                                </button>
+                            )}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

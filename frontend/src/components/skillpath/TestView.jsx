@@ -67,7 +67,7 @@ export default function TestView({
                         <div className="flex-1">
                             <span className="text-[11px] font-black text-indigo-600 uppercase tracking-widest">Question {currentQuestionIdx + 1} of {questions.length}</span>
                             <h3 className="text-2xl font-bold text-slate-800 mt-6 leading-tight max-w-4xl tracking-tight">
-                                {currentQ?.question}
+                                {currentQ?.question_text || currentQ?.question}
                             </h3>
 
                             {currentQ?.code && (
@@ -77,22 +77,35 @@ export default function TestView({
                             )}
 
                             <div className="mt-12 space-y-4 max-w-4xl">
-                                {currentQ?.options.map((opt, idx) => (
-                                    <label key={idx} className={`flex items-center p-6 rounded-[28px] border-2 transition-all cursor-pointer group ${selectedAnswers[currentQuestionIdx] === idx ? 'border-indigo-600 bg-indigo-50/20' : 'border-slate-50 bg-white hover:border-slate-100'}`}>
-                                        <input
-                                            type="radio"
-                                            name="q"
-                                            className="hidden"
-                                            checked={selectedAnswers[currentQuestionIdx] === idx}
-                                            onChange={() => setSelectedAnswers(prev => ({ ...prev, [currentQuestionIdx]: idx }))}
+                                {currentQ?.options && currentQ.options.length > 0 ? (
+                                    currentQ.options.map((opt, idx) => (
+                                        <label key={idx} className={`flex items-center p-6 rounded-[28px] border-2 transition-all cursor-pointer group ${selectedAnswers[currentQuestionIdx] === idx ? 'border-indigo-600 bg-indigo-50/20' : 'border-slate-50 bg-white hover:border-slate-100'}`}>
+                                            <input
+                                                type="radio"
+                                                name="q"
+                                                className="hidden"
+                                                checked={selectedAnswers[currentQuestionIdx] === idx}
+                                                onChange={() => setSelectedAnswers(prev => ({ ...prev, [currentQuestionIdx]: idx }))}
+                                            />
+                                            <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center mr-6 transition-all ${selectedAnswers[currentQuestionIdx] === idx ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-500 group-hover:border-indigo-300'}`}>
+                                                {selectedAnswers[currentQuestionIdx] === idx && <div className="h-2 w-2 rounded-full bg-white"></div>}
+                                            </div>
+                                            <span className={`text-[11px] font-black mr-4 ${selectedAnswers[currentQuestionIdx] === idx ? 'text-indigo-600' : 'text-slate-700'}`}>{String.fromCharCode(65 + idx)}.</span>
+                                            <span className={`text-sm font-bold ${selectedAnswers[currentQuestionIdx] === idx ? 'text-slate-900' : 'text-slate-700'}`}>{opt}</span>
+                                        </label>
+                                    ))
+                                ) : (
+                                    <div className="space-y-4">
+                                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Type your answer below:</p>
+                                        <textarea
+                                            value={selectedAnswers[currentQuestionIdx] || ''}
+                                            onChange={(e) => setSelectedAnswers(prev => ({ ...prev, [currentQuestionIdx]: e.target.value }))}
+                                            placeholder="Write your answer here..."
+                                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-[32px] p-8 focus:outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 text-lg font-bold text-slate-800 transition-all min-h-[200px] resize-none"
                                         />
-                                        <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center mr-6 transition-all ${selectedAnswers[currentQuestionIdx] === idx ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-500 group-hover:border-indigo-300'}`}>
-                                            {selectedAnswers[currentQuestionIdx] === idx && <div className="h-2 w-2 rounded-full bg-white"></div>}
-                                        </div>
-                                        <span className={`text-[11px] font-black mr-4 ${selectedAnswers[currentQuestionIdx] === idx ? 'text-indigo-600' : 'text-slate-700'}`}>{String.fromCharCode(65 + idx)}.</span>
-                                        <span className={`text-sm font-bold ${selectedAnswers[currentQuestionIdx] === idx ? 'text-slate-900' : 'text-slate-700'}`}>{opt}</span>
-                                    </label>
-                                ))}
+                                        <p className="text-[10px] text-slate-400 font-medium">Note: Your answer will be compared with the correct response. Case-sensitivity may apply depending on the test settings.</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

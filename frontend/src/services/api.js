@@ -82,11 +82,28 @@ export const adminService = {
     createSkillPath: (data) => api.post('/admin/skill-paths', data),
     updateSkillPath: (id, data) => api.put(`/admin/skill-paths/${id}`, data),
     deleteSkillPath: (id) => api.delete(`/admin/skill-paths/${id}`),
+
+    // Practice Tests Admin
+    getPracticeTests: () => api.get('/admin/practice-tests'),
+    getPracticeTestById: (id) => api.get(`/admin/practice-tests/${id}`),
+    createPracticeTest: (data) => api.post('/admin/practice-tests', data),
+    updatePracticeTest: (id, data) => api.put(`/admin/practice-tests/${id}`, data),
+    deletePracticeTest: (id) => api.delete(`/admin/practice-tests/${id}`),
+
+    // Question Admin
+    addQuestion: (testId, data) => api.post(`/admin/practice-tests/${testId}/questions`, data),
+    updateQuestion: (id, data) => api.put(`/admin/questions/${id}`, data),
+    deleteQuestion: (id) => api.delete(`/admin/questions/${id}`),
 };
 
 export const skillPathService = {
     getAll: () => api.get('/skill-paths'),
     getById: (id) => api.get(`/skill-paths/${id}`),
+};
+
+export const practiceTestService = {
+    getAll: () => api.get('/practice-tests'),
+    getById: (id) => api.get(`/practice-tests/${id}`),
 };
 
 export default api;

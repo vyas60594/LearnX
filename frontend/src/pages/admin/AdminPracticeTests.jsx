@@ -1,37 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
-
-// Mock Data
-const MOCK_TESTS = [
-    { id: 'pt_1', title: 'React Core Concepts Assessment', type: 'Subject Mock', questions: 25, duration: '30 mins', attempts: 1420 },
-    { id: 'pt_2', title: 'Fullstack Interview Preparation', type: 'Full Mock', questions: 50, duration: '60 mins', attempts: 850 },
-    { id: 'pt_3', title: 'JavaScript Advanced Patterns', type: 'Subject Mock', questions: 15, duration: '20 mins', attempts: 2100 },
-];
+import { adminService } from '../../services/api';
 
 const AdminPracticeTests = () => {
     const navigate = useNavigate();
-    const [tests, setTests] = useState(MOCK_TESTS);
+    const [tests, setTests] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [newTitle, setNewTitle] = useState('');
     const [newType, setNewType] = useState('Subject Mock');
     const [newDuration, setNewDuration] = useState('30 mins');
+    const [newDescription, setNewDescription] = useState('');
+    const [newCategory, setNewCategory] = useState('Python');
+    const [newLevel, setNewLevel] = useState('Beginner');
 
-    const handleCreate = (e) => {
+    useEffect(() => {
+        fetchTests();
+    }, []);
+
+    const fetchTests = async () => {
+        try {
+            setLoading(true);
+            const data = await adminService.getPracticeTests();
+            setTests(data);
+        } catch (error) {
+            console.error('Failed to fetch tests:', error);
+            toast.error('Failed to load practice tests');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCreate = async (e) => {
         e.preventDefault();
-        const newTest = {
-            id: `pt_${Date.now()}`,
-            title: newTitle,
-            type: newType,
-            questions: 0,
-            duration: newDuration,
-            attempts: 0
-        };
-        setTests([newTest, ...tests]);
-        setIsCreateOpen(false);
-        setNewTitle('');
-        setNewDuration('30 mins');
-        toast.success(`Practice Test "${newTitle}" created successfully!`);
+        try {
+            const newTestData = {
+                title: newTitle,
+                description: newDescription,
+                category: newCategory,
+                level: newLevel,
+                duration: newDuration,
+                test_type: newType,
+            };
+            const createdTest = await adminService.createPracticeTest(newTestData);
+            setTests([createdTest, ...tests]);
+            setIsCreateOpen(false);
+            setNewTitle('');
+            setNewDescription('');
+            setNewDuration('30 mins');
+            toast.success(`Practice Test "${newTitle}" created successfully!`);
+        } catch (error) {
+            console.error('Failed to create test:', error);
+            toast.error('Failed to create practice test');
+        }
     };
 
     return (
@@ -60,50 +82,73 @@ const AdminPracticeTests = () => {
                     </div>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-50/80 border-b border-slate-200/60">
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Test Details</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Type</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Questions</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Duration</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Attempts</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {tests.map((test) => (
-                                <tr key={test.id} className="hover:bg-slate-50/50 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-900">{test.title}</div>
-                                        <div className="text-slate-400 text-xs font-medium">ID: {test.id}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-100 text-slate-600 border border-slate-200">
-                                            {test.type}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-700 font-bold text-sm">
-                                        {test.questions} Qs
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600 font-medium text-sm">
-                                        {test.duration}
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-500 font-medium text-sm">
-                                        {test.attempts.toLocaleString()} takes
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button 
-                                            onClick={() => navigate(`/admin/practice-tests/${test.id}`)}
-                                            className="text-emerald-600 hover:text-emerald-900 font-bold text-sm bg-emerald-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
-                                        >
-                                            Edit Questions
-                                        </button>
-                                    </td>
+                    {loading ? (
+                        <div className="p-12 text-center text-slate-500 font-medium">Loading practice tests...</div>
+                    ) : (
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-slate-50/80 border-b border-slate-200/60">
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Test Details</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Type</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Questions</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Duration</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {tests.map((test) => (
+                                    <tr key={test.id} className="hover:bg-slate-50/50 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="font-bold text-slate-900">{test.title}</div>
+                                            <div className="text-slate-400 text-xs font-medium">ID: {test.id} • {test.category} • {test.level}</div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-100 text-slate-600 border border-slate-200">
+                                                {test.test_type || test.type}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-700 font-bold text-sm">
+                                            {test.question_count || 0} Qs
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-600 font-medium text-sm">
+                                            {test.duration}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <button 
+                                                    onClick={() => navigate(`/admin/practice-tests/${test.id}`)}
+                                                    className="text-emerald-600 hover:text-emerald-900 font-bold text-sm bg-emerald-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap"
+                                                >
+                                                    Edit Questions
+                                                </button>
+                                                <button 
+                                                    onClick={async () => {
+                                                        if (confirm('Delete this test?')) {
+                                                            try {
+                                                                await adminService.deletePracticeTest(test.id);
+                                                                setTests(tests.filter(t => t.id !== test.id));
+                                                                toast.success('Test deleted');
+                                                            } catch (err) {
+                                                                toast.error('Failed to delete');
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="text-rose-600 hover:text-rose-900 font-bold text-sm bg-rose-50 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {tests.length === 0 && (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-12 text-center text-slate-400">No practice tests found.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
 
@@ -126,6 +171,44 @@ const AdminPracticeTests = () => {
                                     placeholder="e.g. JavaScript Final Exam"
                                     className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
                                 />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
+                                <textarea 
+                                    required
+                                    value={newDescription}
+                                    onChange={(e) => setNewDescription(e.target.value)}
+                                    placeholder="Brief description of the test content..."
+                                    className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                                    rows="2"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
+                                    <select 
+                                        value={newCategory}
+                                        onChange={(e) => setNewCategory(e.target.value)}
+                                        className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium"
+                                    >
+                                        <option value="Python">Python</option>
+                                        <option value="SQL">SQL</option>
+                                        <option value="DSA">DSA</option>
+                                        <option value="Aptitude">Aptitude</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Level</label>
+                                    <select 
+                                        value={newLevel}
+                                        onChange={(e) => setNewLevel(e.target.value)}
+                                        className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium"
+                                    >
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">

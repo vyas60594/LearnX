@@ -1,35 +1,83 @@
-import React, { useState } from 'react';
-import { ANNOUNCEMENTS as INITIAL_DATA } from '../../data/dashboardData';
+import React, { useState, useEffect } from 'react';
+import { announcementService } from '../../services/api';
+import toast from 'react-hot-toast';
 
 const AdminAnnouncements = () => {
-    const [announcements, setAnnouncements] = useState(INITIAL_DATA);
+    const [announcements, setAnnouncements] = useState([]);
     const [isCreating, setIsCreating] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     
     // New Form State
     const [newTitle, setNewTitle] = useState('');
     const [newDesc, setNewDesc] = useState('');
     const [newType, setNewType] = useState('info');
 
-    const handleCreate = (e) => {
-        e.preventDefault();
-        const newAnn = {
-            id: `ann_${Date.now()}`,
-            title: newTitle,
-            description: newDesc,
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            type: newType,
-            isNew: true
-        };
-        setAnnouncements([newAnn, ...announcements]);
-        setIsCreating(false);
-        setNewTitle('');
-        setNewDesc('');
-        setNewType('info');
+    useEffect(() => {
+        fetchAnnouncements();
+    }, []);
+
+    const fetchAnnouncements = async () => {
+        try {
+            setIsLoading(true);
+            const data = await announcementService.getAll();
+            setAnnouncements(data);
+        } catch (error) {
+            console.error('Failed to fetch announcements:', error);
+            toast.error('Could not load announcements');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleDelete = (id) => {
-        setAnnouncements(announcements.filter(a => a.id !== id));
+    const handleCreate = async (e) => {
+        e.preventDefault();
+        try {
+            const newAnn = {
+                title: newTitle,
+                body: newDesc,
+                type: newType,
+            };
+            const created = await announcementService.create(newAnn);
+            setAnnouncements([created, ...announcements]);
+            setIsCreating(false);
+            setNewTitle('');
+            setNewDesc('');
+            setNewType('info');
+            toast.success('Announcement published!');
+        } catch (error) {
+            console.error('Failed to create announcement:', error);
+            toast.error('Failed to publish announcement');
+        }
     };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this announcement?')) return;
+        
+        try {
+            await announcementService.delete(id);
+            setAnnouncements(announcements.filter(a => a.id !== id));
+            toast.success('Announcement deleted');
+        } catch (error) {
+            console.error('Failed to delete announcement:', error);
+            toast.error('Failed to delete announcement');
+        }
+    };
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+        });
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
@@ -131,14 +179,12 @@ const AdminAnnouncements = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
                                     <h3 className="text-base font-bold text-slate-900">{ann.title}</h3>
-                                    {ann.isNew && <span className="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[10px] uppercase font-bold tracking-wider">Draft / New</span>}
                                 </div>
-                                <p className="text-sm text-slate-500 font-medium mb-2">{ann.description}</p>
-                                <span className="text-xs font-bold text-slate-400">{ann.date}</span>
+                                <p className="text-sm text-slate-500 font-medium mb-2">{ann.body}</p>
+                                <span className="text-xs font-bold text-slate-400">{formatDate(ann.created_at)}</span>
                             </div>
                         </div>
                         <div className="flex sm:flex-col gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition-colors">Edit</button>
                             <button 
                                 onClick={() => handleDelete(ann.id)}
                                 className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-colors"

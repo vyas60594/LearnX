@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Layout Components
 import { useAuth } from '../hooks/useAuth';
@@ -14,9 +14,11 @@ import StatCard from '../components/dashboard/StatCard';
 import UpcomingTestsCard from '../components/dashboard/UpcomingTestsCard';
 import WelcomeHeader from '../components/dashboard/WelcomeHeader';
 
+// Services
+import { announcementService } from '../services/api';
+
 // Data
 import {
-  ANNOUNCEMENTS,
   RECENT_ACTIVITY,
   SKILL_PATHS,
   STAT_CARDS,
@@ -26,6 +28,19 @@ import {
 export default function Dashboard() {
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const data = await announcementService.getAll();
+        setAnnouncements(data);
+      } catch (error) {
+        console.error('Error fetching announcements:', error);
+      }
+    };
+    fetchAnnouncements();
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-white">
@@ -63,7 +78,7 @@ export default function Dashboard() {
 
             <div className="flex flex-col gap-5">
               <UpcomingTestsCard tests={UPCOMING_TESTS} />
-              <AnnouncementsCard announcements={ANNOUNCEMENTS} />
+              <AnnouncementsCard announcements={announcements} />
             </div>
           </div>
         </main>

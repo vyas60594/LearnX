@@ -1,25 +1,17 @@
-// =============================================================
-//  Announcements.jsx
-//  Full-page announcements list styled to match the design reference.
-//  Each card has a colored left-border accent, tag badge, date,
-//  title, body text, and a category icon.
-// =============================================================
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
-import { ANNOUNCEMENTS_DATA } from '../data/announcementsData';
+import { announcementService } from '../services/api';
 
 // ── Tag colour maps ────────────────────────────────────────────
 const TAG_STYLES = {
-  green: { border: '#22c55e', badge: 'bg-green-50 text-green-600', icon: 'bg-green-50 text-green-500' },
-  orange: { border: '#f97316', badge: 'bg-orange-50 text-orange-500', icon: 'bg-orange-50 text-orange-400' },
-  purple: { border: '#8b5cf6', badge: 'bg-violet-50 text-violet-600', icon: 'bg-violet-50 text-violet-500' },
-  blue: { border: '#3b82f6', badge: 'bg-blue-50 text-blue-600', icon: 'bg-blue-50 text-blue-500' },
+  success: { border: '#22c55e', badge: 'bg-green-50 text-green-600', icon: 'bg-green-50 text-green-500', tag: 'Update' },
+  warning: { border: '#f97316', badge: 'bg-orange-50 text-orange-500', icon: 'bg-orange-50 text-orange-400', tag: 'Alert' },
+  info: { border: '#3b82f6', badge: 'bg-blue-50 text-blue-600', icon: 'bg-blue-50 text-blue-500', tag: 'Notice' },
 };
 
 // ── Icons ──────────────────────────────────────────────────────
-function AnnouncementIcon({ name, className }) {
+function AnnouncementIcon({ type, className }) {
   const props = {
     width: '18', height: '18',
     viewBox: '0 0 24 24',
@@ -31,22 +23,12 @@ function AnnouncementIcon({ name, className }) {
   };
 
   const icons = {
-    star: (
-      <svg {...props}>
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-      </svg>
-    ),
-    wrench: (
-      <svg {...props}>
-        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z" />
-      </svg>
-    ),
-    bolt: (
-      <svg {...props}>
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-      </svg>
-    ),
-    check: (
+    warning: (
+        <svg {...props}>
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+      ),
+    success: (
       <svg {...props}>
         <polyline points="20 6 9 17 4 12" />
       </svg>
@@ -60,12 +42,17 @@ function AnnouncementIcon({ name, className }) {
     ),
   };
 
-  return <span className={className}>{icons[name] ?? icons.info}</span>;
+  return <span className={className}>{icons[type] ?? icons.info}</span>;
 }
 
 // ── Single announcement card ───────────────────────────────────
 function AnnouncementCard({ item }) {
-  const style = TAG_STYLES[item.tagColor] ?? TAG_STYLES.blue;
+  const style = TAG_STYLES[item.type] ?? TAG_STYLES.info;
+  const dateStr = new Date(item.created_at).toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
 
   return (
     <div
@@ -76,7 +63,7 @@ function AnnouncementCard({ item }) {
 
         {/* ── Category icon bubble ── */}
         <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${style.icon} transition-transform duration-300 group-hover:scale-110`}>
-          <AnnouncementIcon name={item.icon} />
+          <AnnouncementIcon type={item.type} />
         </div>
 
         {/* ── Content ── */}
@@ -85,9 +72,9 @@ function AnnouncementCard({ item }) {
           {/* Tag + date row */}
           <div className="flex flex-wrap items-center gap-3 mb-2">
             <span className={`inline-flex items-center rounded-full px-3 py-0.5 text-[11px] font-bold tracking-wide ${style.badge}`}>
-              {item.tag}
+              {style.tag}
             </span>
-            <span className="text-[12px] font-semibold text-slate-400">{item.date}</span>
+            <span className="text-[12px] font-semibold text-slate-400">{dateStr}</span>
           </div>
 
           {/* Title */}
@@ -108,6 +95,24 @@ function AnnouncementCard({ item }) {
 // ── Page ──────────────────────────────────────────────────────
 export default function Announcements() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
+
+  const fetchAnnouncements = async () => {
+    try {
+      setIsLoading(true);
+      const data = await announcementService.getAll();
+      setAnnouncements(data);
+    } catch (error) {
+      console.error('Failed to fetch announcements:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
@@ -145,11 +150,23 @@ export default function Announcements() {
           </div>
 
           {/* ── Cards list ── */}
-          <div className="flex flex-col gap-4 max-w-3xl">
-            {ANNOUNCEMENTS_DATA.map((item) => (
-              <AnnouncementCard key={item.id} item={item} />
-            ))}
-          </div>
+          {isLoading ? (
+             <div className="flex justify-center py-20">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+             </div>
+          ) : (
+            <div className="flex flex-col gap-4 max-w-3xl">
+                {announcements.length > 0 ? (
+                    announcements.map((item) => (
+                        <AnnouncementCard key={item.id} item={item} />
+                    ))
+                ) : (
+                    <div className="bg-white p-12 rounded-3xl border border-dashed border-slate-200 text-center">
+                        <p className="text-slate-400 font-medium">No announcements found at this time.</p>
+                    </div>
+                )}
+            </div>
+          )}
 
         </main>
       </div>

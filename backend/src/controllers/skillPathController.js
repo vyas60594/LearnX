@@ -31,6 +31,22 @@ export const createSkillPath = async (req, res) => {
       'INSERT INTO skill_paths (title, description, image_url, color, status, content, modules_count, levels_count) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
       [title, description, image_url, color, status || 'Draft', content || {}, modules_count || 0, levels_count || 0]
     );
+
+    // Automatically create an announcement for the new skill path
+    try {
+      await pool.query(
+        'INSERT INTO announcements (title, body, type) VALUES ($1, $2, $3)',
+        [
+          `New Skill Path Added: ${title}`,
+          `Explore our latest learning journey: "${title}". Start learning today!`,
+          'success'
+        ]
+      );
+    } catch (announcementError) {
+      // Log error but don't fail the main request
+      console.error('Auto-announcement failed:', announcementError.message);
+    }
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error creating skill path:', error);

@@ -106,4 +106,11 @@ export const practiceTestService = {
     getById: (id) => api.get(`/practice-tests/${id}`),
 };
 
+export const announcementService = {
+    getAll: () => api.get('/announcements'),
+    create: (data) => api.post('/announcements', data),
+    update: (id, data) => api.put(`/announcements/${id}`, data),
+    delete: (id) => api.delete(`/announcements/${id}`),
+};
+
 export default api;

@@ -16,9 +16,9 @@ export default function ActiveSkillPathsCard({ paths }) {
             </div>
 
             <div className="flex flex-col divide-y divide-gray-50">
-                {paths.map((path) => (
+                {paths.map((path, idx) => (
                     <SkillPathRow
-                        key={path.name}
+                        key={`${path.name}-${idx}`}
                         path={path}
                         onClick={() => navigate("/skill-paths")}
                     />

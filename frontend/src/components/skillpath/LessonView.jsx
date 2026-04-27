@@ -1,3 +1,4 @@
+import { userService } from '../../services/api';
 import SideBar from '../layout/SideBar';
 import TopBar from '../layout/TopBar';
 
@@ -7,6 +8,17 @@ export default function LessonView({
     isSidebarOpen,
     setIsSidebarOpen
 }) {
+    const handleComplete = async () => {
+        if (viewingModule && viewingModule.id) {
+            try {
+                await userService.completeModule(viewingModule.id);
+            } catch (error) {
+                console.error('Failed to mark module as completed:', error);
+            }
+        }
+        setViewingModule(null);
+    };
+
     if (!viewingModule) return null;
 
     return (
@@ -29,7 +41,7 @@ export default function LessonView({
                         </div>
 
                         <div className="mt-10 flex justify-end">
-                            <button onClick={() => setViewingModule(null)} className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-100">
+                            <button onClick={handleComplete} className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-100">
                                 Complete Module
                             </button>
                         </div>

@@ -31,6 +31,18 @@ async function fix() {
       ALTER TABLE skill_paths ADD COLUMN IF NOT EXISTS levels_count INT DEFAULT 0;
     `);
 
+    console.log('Ensuring modules structure...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS modules (
+          id SERIAL PRIMARY KEY,
+          skill_path_id INT REFERENCES skill_paths(id) ON DELETE CASCADE,
+          title VARCHAR(255) NOT NULL,
+          content TEXT,
+          order_index INT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     console.log('Creating activities...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS activities (
@@ -47,9 +59,22 @@ async function fix() {
       CREATE TABLE IF NOT EXISTS user_test_scores (
           id SERIAL PRIMARY KEY,
           user_id INT REFERENCES users(id) ON DELETE CASCADE,
+          test_id INT REFERENCES practice_tests(id) ON DELETE SET NULL,
           score INT NOT NULL,
           total_questions INT NOT NULL,
           taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      ALTER TABLE user_test_scores ADD COLUMN IF NOT EXISTS test_id INT;
+    `);
+
+    console.log('Creating user_progress...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_progress (
+          id SERIAL PRIMARY KEY,
+          user_id INT REFERENCES users(id) ON DELETE CASCADE,
+          module_id INT REFERENCES modules(id) ON DELETE CASCADE,
+          completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, module_id)
       );
     `);
     

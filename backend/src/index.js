@@ -8,6 +8,7 @@ import skillPathRoutes from './routes/skillPathRoutes.js';
 import practiceTestRoutes from './routes/practiceTestRoutes.js';
 
 import announcementRoutes from './routes/announcementRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -22,6 +23,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/skill-paths', skillPathRoutes);
 app.use('/api/practice-tests', practiceTestRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/user', userRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {

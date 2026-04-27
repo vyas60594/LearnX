@@ -63,6 +63,9 @@ export const authService = {
 export const userService = {
     getProfile: () => api.get('/users/profile'),
     updateProfile: (data) => api.put('/users/profile', data),
+    getDashboardStats: () => api.get('/user/stats'),
+    completeModule: (moduleId) => api.post('/user/complete-module', { moduleId }),
+    submitTestResult: (data) => api.post('/user/submit-test', data),
 };
 
 export const progressService = {

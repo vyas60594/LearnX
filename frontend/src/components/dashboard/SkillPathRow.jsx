@@ -4,17 +4,19 @@ export default function SkillPathRow({ path, onClick }) {
             onClick={onClick}
             className="flex cursor-pointer items-center gap-3 py-3 transition-colors hover:bg-slate-50/50 rounded-lg px-2 -mx-2"
         >
-            <img
-                src={path.img}
-                alt={path.name}
-                className="h-9 w-9 shrink-0 rounded-lg object-cover"
-                onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                }}
-            />
+            {path.img ? (
+                <img
+                    src={path.img}
+                    alt={path.name}
+                    className="h-9 w-9 shrink-0 rounded-lg object-cover"
+                    onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                    }}
+                />
+            ) : null}
             <div
-                className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white text-xs font-bold"
+                className={`${path.img ? 'hidden' : 'flex'} h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white text-xs font-bold`}
                 style={{ background: path.color }}
             >
                 {path.name[0]}

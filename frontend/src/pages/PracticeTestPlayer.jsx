@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import ResultView from '../components/skillpath/ResultView';
 import TestView from '../components/skillpath/TestView';
-import { practiceTestService } from '../services/api';
+import { practiceTestService, userService } from '../services/api';
 
 export default function PracticeTestPlayer() {
     const { id } = useParams();
@@ -65,7 +65,7 @@ export default function PracticeTestPlayer() {
         return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
 
-    const handleFinishTest = () => {
+    const handleFinishTest = async () => {
         let correctCount = 0;
         activeQuestions.forEach((q, idx) => {
             const userAnswer = selectedAnswers[idx];
@@ -89,6 +89,17 @@ export default function PracticeTestPlayer() {
         });
 
         const score = Math.round((correctCount / activeQuestions.length) * 100);
+        
+        // Save result to backend
+        try {
+            await userService.submitTestResult({
+                testId: id,
+                score,
+                totalQuestions: activeQuestions.length
+            });
+        } catch (err) {
+            console.error('Failed to save test result:', err);
+        }
         setTestResult({
             score,
             correct: correctCount,

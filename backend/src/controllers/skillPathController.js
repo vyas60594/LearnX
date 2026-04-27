@@ -24,6 +24,7 @@ export const getSkillPathById = async (req, res) => {
   }
 };
 
+//skillPath logic
 export const createSkillPath = async (req, res) => {
   const { title, description, image_url, color, status, content, modules_count, levels_count } = req.body;
   try {

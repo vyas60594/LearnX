@@ -201,6 +201,7 @@ export default function SkillPathDetail() {
                 setViewingModule={setViewingModule}
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
+                skillPathId={id}
             />
         );
     }

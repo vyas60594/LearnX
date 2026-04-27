@@ -64,7 +64,7 @@ export const userService = {
     getProfile: () => api.get('/users/profile'),
     updateProfile: (data) => api.put('/users/profile', data),
     getDashboardStats: () => api.get('/user/stats'),
-    completeModule: (moduleId) => api.post('/user/complete-module', { moduleId }),
+    completeModule: (moduleId, moduleTitle, skillPathId) => api.post('/user/complete-module', { moduleId, moduleTitle, skillPathId }),
     submitTestResult: (data) => api.post('/user/submit-test', data),
 };
 

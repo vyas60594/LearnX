@@ -6,12 +6,13 @@ export default function LessonView({
     viewingModule,
     setViewingModule,
     isSidebarOpen,
-    setIsSidebarOpen
+    setIsSidebarOpen,
+    skillPathId
 }) {
     const handleComplete = async () => {
         if (viewingModule && viewingModule.id) {
             try {
-                await userService.completeModule(viewingModule.id);
+                await userService.completeModule(viewingModule.id, viewingModule.title, skillPathId);
             } catch (error) {
                 console.error('Failed to mark module as completed:', error);
             }

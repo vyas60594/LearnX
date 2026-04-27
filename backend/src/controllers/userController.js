@@ -5,23 +5,30 @@ export const getUserStats = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // 1. Modules Completed
+    // 1. Modules Completed — from user_module_completions
     const completedModulesResult = await pool.query(
-      'SELECT COUNT(*) FROM user_progress WHERE user_id = $1',
+      'SELECT COUNT(*) FROM user_module_completions WHERE user_id = $1',
       [userId]
     );
     const completedModules = parseInt(completedModulesResult.rows[0].count);
 
-    // Total available modules (for the denominator)
-    const totalModulesResult = await pool.query('SELECT COUNT(*) FROM modules');
-    const totalModules = parseInt(totalModulesResult.rows[0].count);
+    // Total available modules — count from skill_paths.content JSONB
+    // Each skill path has content->{levels} array, each level has {modules} array
+    const totalModulesResult = await pool.query(`
+      SELECT COALESCE(SUM(module_count), 0) as total FROM (
+        SELECT (
+          SELECT COALESCE(SUM(jsonb_array_length(level->'modules')), 0)
+          FROM jsonb_array_elements(COALESCE(sp.content->'levels', '[]'::jsonb)) AS level
+          WHERE level->'modules' IS NOT NULL
+        ) as module_count
+        FROM skill_paths sp
+      ) sub
+    `);
+    const totalModules = parseInt(totalModulesResult.rows[0].total);
 
-    // 2. Active Paths (Paths where user has at least one module completed)
+    // 2. Active Paths — distinct skill_path_id from user_module_completions
     const activePathsResult = await pool.query(
-      `SELECT COUNT(DISTINCT m.skill_path_id) 
-       FROM user_progress up 
-       JOIN modules m ON up.module_id = m.id 
-       WHERE up.user_id = $1`,
+      'SELECT COUNT(DISTINCT skill_path_id) FROM user_module_completions WHERE user_id = $1',
       [userId]
     );
     const activePaths = parseInt(activePathsResult.rows[0].count);
@@ -37,18 +44,21 @@ export const getUserStats = async (req, res) => {
     );
     const testsPassed = parseInt(testsPassedResult.rows[0].count);
 
-    // 4. Certificates (Completed Paths)
-    // A path is completed if total modules in path = completed modules by user in that path
-    const certificatesResult = await pool.query(
-      `SELECT COUNT(*) FROM (
-        SELECT m.skill_path_id 
-        FROM modules m
-        LEFT JOIN user_progress up ON m.id = up.module_id AND up.user_id = $1
-        GROUP BY m.skill_path_id
-        HAVING COUNT(m.id) > 0 AND COUNT(m.id) = COUNT(up.id)
-      ) AS completed_paths`,
-      [userId]
-    );
+    // 4. Certificates — paths where user completed ALL modules
+    const certificatesResult = await pool.query(`
+      SELECT COUNT(*) FROM (
+        SELECT sp.id,
+          (SELECT COALESCE(SUM(jsonb_array_length(level->'modules')), 0)
+           FROM jsonb_array_elements(COALESCE(sp.content->'levels', '[]'::jsonb)) AS level
+           WHERE level->'modules' IS NOT NULL
+          ) as total_mods,
+          (SELECT COUNT(*) FROM user_module_completions umc 
+           WHERE umc.user_id = $1 AND umc.skill_path_id = sp.id
+          ) as completed_mods
+        FROM skill_paths sp
+      ) sub
+      WHERE total_mods > 0 AND total_mods = completed_mods
+    `, [userId]);
     const certificates = parseInt(certificatesResult.rows[0].count);
 
     // 5. Recent Activity
@@ -82,16 +92,20 @@ export const getUserStats = async (req, res) => {
       color: row.type === 'completed' ? '#10b981' : row.type === 'started' ? '#6366f1' : row.type === 'passed' ? '#f59e0b' : '#8b5cf6'
     }));
 
-    // 6. Skill Path Progress for the progress cards
-    const pathProgressResult = await pool.query(
-      `SELECT 
+    // 6. Skill Path Progress — count from JSONB + user_module_completions
+    const pathProgressResult = await pool.query(`
+      SELECT 
+        sp.id,
         sp.title as name, 
         sp.image_url as img, 
         sp.color,
-        (SELECT COUNT(*) FROM modules WHERE skill_path_id = sp.id) as total_modules,
-        (SELECT COUNT(*) FROM user_progress up 
-         JOIN modules m ON up.module_id = m.id 
-         WHERE up.user_id = $1 AND m.skill_path_id = sp.id) as completed_modules
+        (SELECT COALESCE(SUM(jsonb_array_length(level->'modules')), 0)
+         FROM jsonb_array_elements(COALESCE(sp.content->'levels', '[]'::jsonb)) AS level
+         WHERE level->'modules' IS NOT NULL
+        ) as total_modules,
+        (SELECT COUNT(*) FROM user_module_completions umc 
+         WHERE umc.user_id = $1 AND umc.skill_path_id = sp.id
+        ) as completed_modules
        FROM skill_paths sp`,
       [userId]
     );
@@ -129,21 +143,26 @@ export const getUserStats = async (req, res) => {
 
 export const completeModule = async (req, res) => {
   const userId = req.user.id;
-  const { moduleId } = req.body;
+  const { moduleId, moduleTitle, skillPathId } = req.body;
 
   try {
-    // 1. Mark module as completed
-    await pool.query(
-      'INSERT INTO user_progress (user_id, module_id) VALUES ($1, $2) ON CONFLICT (user_id, module_id) DO NOTHING',
-      [userId, moduleId]
-    );
+    const title = moduleTitle || 'a module';
 
-    // 2. Fetch module title for logging
-    const moduleResult = await pool.query('SELECT title FROM modules WHERE id = $1', [moduleId]);
-    const moduleTitle = moduleResult.rows[0]?.title || 'a module';
+    // Save to user_module_completions (works for all module ID types)
+    if (skillPathId && moduleId) {
+      await pool.query(
+        `INSERT INTO user_module_completions (user_id, skill_path_id, module_content_id, module_title) 
+         VALUES ($1, $2, $3, $4) 
+         ON CONFLICT (user_id, skill_path_id, module_content_id) DO NOTHING`,
+        [userId, skillPathId, String(moduleId), title]
+      );
+    }
 
-    // 3. Log activity
-    await logActivity(userId, `Completed module: ${moduleTitle}`, { moduleId });
+    // Log activity
+    await logActivity(userId, `Completed module: ${title}`, { 
+      moduleId: String(moduleId), 
+      skillPathId 
+    });
 
     res.status(200).json({ message: 'Module marked as completed' });
   } catch (error) {

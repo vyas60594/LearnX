@@ -84,6 +84,19 @@ async function fix() {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'Active';
     `);
 
+    console.log('Creating user_module_completions...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_module_completions (
+          id SERIAL PRIMARY KEY,
+          user_id INT REFERENCES users(id) ON DELETE CASCADE,
+          skill_path_id INT REFERENCES skill_paths(id) ON DELETE CASCADE,
+          module_content_id TEXT NOT NULL,
+          module_title TEXT,
+          completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, skill_path_id, module_content_id)
+      );
+    `);
+
     console.log('Success: Core tables ensured.');
     process.exit(0);
   } catch (err) {

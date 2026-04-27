@@ -9,7 +9,8 @@ import LevelSection from '../components/skillpath/LevelSection';
 import PathHeader from '../components/skillpath/PathHeader';
 import ResultView from '../components/skillpath/ResultView';
 import TestView from '../components/skillpath/TestView';
-import { skillPathService } from '../services/api';
+import { skillPathService, userService } from '../services/api';
+import toast from 'react-hot-toast';
 
 export default function SkillPathDetail() {
     const { id } = useParams();
@@ -264,6 +265,21 @@ export default function SkillPathDetail() {
                             </div>
                             <button
                                 disabled={!allLevelsUnlocked}
+                                onClick={async () => {
+                                    if (!allLevelsUnlocked) return;
+                                    try {
+                                        await userService.claimCertificate(id);
+                                        toast.success('🎉 Certificate claimed! Check your Certificates page.');
+                                        navigate('/certificates');
+                                    } catch (err) {
+                                        if (err.response?.data?.error === 'Certificate already claimed') {
+                                            toast.success('Certificate already earned! Redirecting...');
+                                            navigate('/certificates');
+                                        } else {
+                                            toast.error('Failed to claim certificate');
+                                        }
+                                    }
+                                }}
                                 className={`px-8 py-4 text-xs font-black rounded-xl border uppercase tracking-widest flex items-center gap-2 transition-all ${allLevelsUnlocked
                                         ? 'bg-amber-500 text-white border-amber-600 shadow-xl shadow-amber-200 hover:bg-amber-600 active:scale-95 cursor-pointer'
                                         : 'bg-amber-200 text-amber-800 border-amber-300 opacity-60 cursor-not-allowed'

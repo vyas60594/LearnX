@@ -197,3 +197,76 @@ export const submitTestResult = async (req, res) => {
     res.status(500).json({ error: 'Failed to submit test result' });
   }
 };
+
+export const claimCertificate = async (req, res) => {
+  const userId = req.user.id;
+  const { skillPathId } = req.body;
+
+  try {
+    // 1. Verify the skill path exists
+    const pathResult = await pool.query('SELECT id, title FROM skill_paths WHERE id = $1', [skillPathId]);
+    if (pathResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Skill path not found' });
+    }
+    const pathTitle = pathResult.rows[0].title;
+
+    // 2. Check if certificate already exists
+    const existingCert = await pool.query(
+      'SELECT id FROM user_certificates WHERE user_id = $1 AND skill_path_id = $2',
+      [userId, skillPathId]
+    );
+    if (existingCert.rows.length > 0) {
+      return res.status(400).json({ error: 'Certificate already claimed', certificateId: existingCert.rows[0].id });
+    }
+
+    // 3. Get user info
+    const userResult = await pool.query('SELECT username, email FROM users WHERE id = $1', [userId]);
+    const userName = userResult.rows[0]?.username || 'Student';
+
+    // 4. Generate a unique certificate ID
+    const certId = `LX-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+
+    // 5. Insert certificate
+    const result = await pool.query(
+      `INSERT INTO user_certificates (user_id, skill_path_id, certificate_id, path_title, user_name, issued_at)
+       VALUES ($1, $2, $3, $4, $5, NOW())
+       RETURNING *`,
+      [userId, skillPathId, certId, pathTitle, userName]
+    );
+
+    // 6. Log activity
+    await logActivity(userId, `Earned certificate: ${pathTitle}`, { skillPathId, certificateId: certId });
+
+    res.status(201).json({
+      message: 'Certificate claimed successfully!',
+      certificate: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error claiming certificate:', error);
+    res.status(500).json({ error: 'Failed to claim certificate' });
+  }
+};
+
+export const getUserCertificates = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      `SELECT uc.*, sp.description, sp.image_url, sp.color,
+        (SELECT COALESCE(SUM(jsonb_array_length(level->'modules')), 0)
+         FROM jsonb_array_elements(COALESCE(sp.content->'levels', '[]'::jsonb)) AS level
+         WHERE level->'modules' IS NOT NULL
+        ) as total_modules
+       FROM user_certificates uc
+       JOIN skill_paths sp ON uc.skill_path_id = sp.id
+       WHERE uc.user_id = $1
+       ORDER BY uc.issued_at DESC`,
+      [userId]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+    res.status(500).json({ error: 'Failed to fetch certificates' });
+  }
+};

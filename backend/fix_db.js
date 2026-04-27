@@ -97,6 +97,20 @@ async function fix() {
       );
     `);
 
+    console.log('Creating user_certificates...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_certificates (
+          id SERIAL PRIMARY KEY,
+          user_id INT REFERENCES users(id) ON DELETE CASCADE,
+          skill_path_id INT REFERENCES skill_paths(id) ON DELETE CASCADE,
+          certificate_id TEXT UNIQUE NOT NULL,
+          path_title TEXT NOT NULL,
+          user_name TEXT NOT NULL,
+          issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, skill_path_id)
+      );
+    `);
+
     console.log('Success: Core tables ensured.');
     process.exit(0);
   } catch (err) {

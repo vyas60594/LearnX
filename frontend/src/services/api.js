@@ -66,6 +66,8 @@ export const userService = {
     getDashboardStats: () => api.get('/user/stats'),
     completeModule: (moduleId, moduleTitle, skillPathId) => api.post('/user/complete-module', { moduleId, moduleTitle, skillPathId }),
     submitTestResult: (data) => api.post('/user/submit-test', data),
+    claimCertificate: (skillPathId) => api.post('/user/claim-certificate', { skillPathId }),
+    getCertificates: () => api.get('/user/certificates'),
 };
 
 export const progressService = {

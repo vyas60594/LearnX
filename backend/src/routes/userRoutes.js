@@ -1,8 +1,11 @@
 import { Router } from 'express';
-import { claimCertificate, completeModule, getUserCertificates, getUserStats, submitTestResult } from '../controllers/userController.js';
+import { claimCertificate, completeModule, getUserCertificates, getUserStats, submitTestResult, getProfile, updateProfile } from '../controllers/userController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = Router();
+
+router.get('/profile', authMiddleware, getProfile);
+router.put('/profile', authMiddleware, updateProfile);
 
 router.get('/stats', authMiddleware, getUserStats);
 router.post('/complete-module', authMiddleware, completeModule);

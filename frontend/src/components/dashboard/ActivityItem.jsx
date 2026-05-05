@@ -28,7 +28,7 @@ function ActivityIcon({ type, color }) {
 }
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-//test
+
 export default function ActivityItem({ item }) {
     return (
         <div className="flex items-start gap-3">

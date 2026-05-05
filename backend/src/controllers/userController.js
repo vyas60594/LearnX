@@ -1,6 +1,98 @@
 import pool from '../config/db.js';
 import { logActivity } from '../utils/activityLogger.js';
 
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await pool.query(
+      'SELECT id, username as name, email, role as system_role, job_role as role, department, created_at FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = result.rows[0];
+    
+    // Format joined date
+    const joinDate = new Date(user.created_at);
+    const joined = joinDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    // Initials
+    const initials = user.name
+      .split(' ')
+      .filter(n => n.length > 0)
+      .map(n => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase() || 'U';
+
+    res.status(200).json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role || 'Member',
+      department: user.department || 'General',
+      joined,
+      initials,
+      system_role: user.system_role
+    });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email, role, department } = req.body;
+
+    const result = await pool.query(
+      `UPDATE users 
+       SET username = $1, email = $2, job_role = $3, department = $4, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = $5 
+       RETURNING id, username as name, email, role as system_role, job_role as role, department, created_at`,
+      [name, email, role, department, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    await logActivity(userId, 'Updated profile', { type: 'profile_update' });
+
+    const user = result.rows[0];
+    const joinDate = new Date(user.created_at);
+    const joined = joinDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const initials = user.name
+      .split(' ')
+      .filter(n => n.length > 0)
+      .map(n => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase() || 'U';
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role || 'Member',
+        department: user.department || 'General',
+        joined,
+        initials,
+        system_role: user.system_role
+      }
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+};
+
 export const getUserStats = async (req, res) => {
   const userId = req.user.id;
 

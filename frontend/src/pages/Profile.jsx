@@ -6,11 +6,13 @@
 //  Right bottom: Skill Path Progress bars
 // =============================================================
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import SideBar from '../components/layout/SideBar';
 import TopBar from '../components/layout/TopBar';
-import { useAuth } from '../hooks/useAuth';
 import { SKILL_PATHS } from '../data/dashboardData';
+import { useAuth } from '../hooks/useAuth';
+import { userService } from '../services/api';
 
 const STATS = [
   {
@@ -238,7 +240,7 @@ function EditProfileModal({ onClose, user, onSave }) {
             </svg>
           </button>
         </div>
-        
+
         <form onSubmit={handleSave} className="p-6">
           <div className="space-y-4">
             <div>
@@ -258,7 +260,7 @@ function EditProfileModal({ onClose, user, onSave }) {
               <input type="text" name="department" value={formData.department} onChange={handleChange} required className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium" />
             </div>
           </div>
-          
+
           <div className="mt-8 flex gap-3">
             <button type="button" onClick={onClose} className="flex-1 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 active:scale-95 transition-all">
               Cancel
@@ -275,21 +277,46 @@ function EditProfileModal({ onClose, user, onSave }) {
 
 // ── Page ──────────────────────────────────────────────────────
 export default function Profile() {
-  const { user: authUser } = useAuth();
+  const { user: authUser, setUser: setAuthUser } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(authUser || {
-      name: 'Guest User',
-      role: 'Guest',
-      email: '',
-      initials: 'G',
-      department: 'N/A',
-      joined: 'N/A'
+    name: 'Guest User',
+    role: 'Guest',
+    email: '',
+    initials: 'G',
+    department: 'N/A',
+    joined: 'N/A'
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const handleSaveProfile = (updatedUser) => {
-    setUser(updatedUser);
-    setIsEditModalOpen(false);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await userService.getProfile();
+        setUser(data);
+        if (setAuthUser) {
+          setAuthUser(prev => ({ ...prev, ...data }));
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile:', err);
+      }
+    };
+    fetchProfile();
+  }, [setAuthUser]);
+
+  const handleSaveProfile = async (updatedUser) => {
+    try {
+      const data = await userService.updateProfile(updatedUser);
+      setUser(data.user);
+      if (setAuthUser) {
+        setAuthUser(prev => ({ ...prev, ...data.user }));
+      }
+      toast.success('Profile updated successfully');
+      setIsEditModalOpen(false);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      toast.error('Failed to update profile');
+    }
   };
 
   return (

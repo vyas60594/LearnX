@@ -176,3 +176,26 @@ export const inviteUser = async (req, res) => {
   }
 };
 
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Optional: Log activity before deletion so we know who deleted whom
+    const userResult = await pool.query('SELECT username FROM users WHERE id = $1', [id]);
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const targetUsername = userResult.rows[0].username;
+
+    // Delete user
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+
+    // Log the action
+    await logActivity(req.user?.id, `Permanently deleted user ${targetUsername} (ID: ${id})`);
+
+    res.status(200).json({ message: 'User deleted permanently' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+};

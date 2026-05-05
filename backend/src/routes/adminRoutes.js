@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAdminStats, getAllUsers, inviteUser, updateUser } from '../controllers/adminController.js';
+import { getAdminStats, getAllUsers, inviteUser, updateUser, deleteUser } from '../controllers/adminController.js';
 import { 
   getSkillPaths, 
   getSkillPathById, 
@@ -24,6 +24,7 @@ const router = Router();
 router.get('/stats', authMiddleware, getAdminStats);
 router.get('/users', authMiddleware, getAllUsers);
 router.put('/users/:id', authMiddleware, updateUser);
+router.delete('/users/:id', authMiddleware, deleteUser);
 router.post('/invite', authMiddleware, inviteUser);
 
 // Skill Path Routes

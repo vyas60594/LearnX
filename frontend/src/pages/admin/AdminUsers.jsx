@@ -75,6 +75,25 @@ const AdminUsers = () => {
         }
     };
 
+    const handleDelete = async (userId, userName) => {
+        const confirmed = window.confirm(`Are you sure you want to PERMANENTLY delete ${userName}? This action cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            toast.loading('Deleting user...', { id: 'deleteUser' });
+            await adminService.deleteUser(userId);
+            
+            // Remove from local state
+            setUsers(users.filter(u => u.id !== userId));
+            
+            toast.success(`${userName} deleted successfully`, { id: 'deleteUser' });
+            setIsEditOpen(false); // Close modal if open
+        } catch (err) {
+            toast.error('Failed to delete user', { id: 'deleteUser' });
+            console.error(err);
+        }
+    };
+
     const openEditModal = (user) => {
         setEditingUser(user);
         
@@ -290,7 +309,13 @@ const AdminUsers = () => {
                             </div>
                             <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 mt-2">
                                 <p className="text-xs font-bold text-rose-700 uppercase mb-1">Danger Zone</p>
-                                <button type="button" className="text-sm font-bold text-rose-600 hover:text-rose-800">Delete Account Permanently...</button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => handleDelete(editingUser.id, editingUser.name)}
+                                    className="text-sm font-bold text-rose-600 hover:text-rose-800"
+                                >
+                                    Delete Account Permanently...
+                                </button>
                             </div>
                             <div className="flex gap-3 justify-end pt-4">
                                 <button type="button" onClick={() => setIsEditOpen(false)} className="px-5 py-2.5 rounded-xl font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors">Cancel</button>

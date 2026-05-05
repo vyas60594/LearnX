@@ -10,6 +10,7 @@ const AdminSkillPaths = () => {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [newTitle, setNewTitle] = useState('');
     const [newStatus, setNewStatus] = useState('Draft');
+    const [newImageUrl, setNewImageUrl] = useState('');
 
     const fetchPaths = async () => {
         try {
@@ -35,13 +36,14 @@ const AdminSkillPaths = () => {
                 title: newTitle,
                 status: newStatus,
                 description: '',
-                image_url: '',
+                image_url: newImageUrl,
                 color: 'blue',
                 content: { levels: [] }
             });
             setPaths([newPath, ...paths]);
             setIsCreateOpen(false);
             setNewTitle('');
+            setNewImageUrl('');
             toast.success(`Path "${newTitle}" created successfully!`);
             navigate(`/admin/skill-paths/${newPath.id}`);
         } catch (error) {
@@ -174,6 +176,30 @@ const AdminSkillPaths = () => {
                                     placeholder="e.g. Master React 18"
                                     className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
                                 />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Path Photo</label>
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            if (e.target.files && e.target.files[0]) {
+                                                try {
+                                                    toast.loading('Uploading...', { id: 'upload' });
+                                                    const res = await adminService.uploadImage(e.target.files[0]);
+                                                    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+                                                    setNewImageUrl(baseUrl + res.imageUrl);
+                                                    toast.success('Image uploaded!', { id: 'upload' });
+                                                } catch (err) {
+                                                    toast.error('Upload failed', { id: 'upload' });
+                                                }
+                                            }
+                                        }}
+                                        className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                    />
+                                </div>
+                                {newImageUrl && <img src={newImageUrl} alt="Preview" className="h-16 w-16 object-cover rounded-lg border shadow-sm mt-2" />}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Initial Status</label>

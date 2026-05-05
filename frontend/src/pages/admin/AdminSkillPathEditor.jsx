@@ -318,12 +318,37 @@ const AdminSkillPathEditor = () => {
                 </button>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                             <input 
                                 value={path.title} 
                                 onChange={(e) => setPath({...path, title: e.target.value})}
+                                placeholder="Skill Path Title"
                                 className="text-2xl font-black text-slate-900 tracking-tight bg-transparent border-b border-dashed border-slate-300 focus:border-indigo-500 focus:outline-none"
                             />
+                            <div className="flex items-center gap-2">
+                                {path.image_url && <img src={path.image_url} alt="Cover" className="h-8 w-8 object-cover rounded shadow-sm" />}
+                                <label className="cursor-pointer text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors">
+                                    Upload Photo
+                                    <input 
+                                        type="file" 
+                                        className="hidden" 
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            if (e.target.files && e.target.files[0]) {
+                                                try {
+                                                    toast.loading('Uploading...', { id: 'upload' });
+                                                    const res = await adminService.uploadImage(e.target.files[0]);
+                                                    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+                                                    setPath({...path, image_url: baseUrl + res.imageUrl});
+                                                    toast.success('Image uploaded!', { id: 'upload' });
+                                                } catch (err) {
+                                                    toast.error('Upload failed', { id: 'upload' });
+                                                }
+                                            }
+                                        }} 
+                                    />
+                                </label>
+                            </div>
                             <select 
                                 value={path.status}
                                 onChange={(e) => setPath({...path, status: e.target.value})}

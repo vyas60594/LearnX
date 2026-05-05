@@ -99,6 +99,16 @@ export const adminService = {
     addQuestion: (testId, data) => api.post(`/admin/practice-tests/${testId}/questions`, data),
     updateQuestion: (id, data) => api.put(`/admin/questions/${id}`, data),
     deleteQuestion: (id) => api.delete(`/admin/questions/${id}`),
+
+    uploadImage: (file) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        return api.post('/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
 };
 
 export const skillPathService = {
